@@ -1,0 +1,4 @@
+*.pyc
+challenges/*.pyc
+challenges/*.grc
+.git/
