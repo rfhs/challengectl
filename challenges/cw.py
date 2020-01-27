@@ -16,6 +16,7 @@ from gnuradio.filter import firdes
 from optparse import OptionParser
 import osmosdr
 import time
+import signal
 import numpy as np
 
 CODE = {
@@ -66,6 +67,7 @@ morse=()
 wpm=1
 freq=0
 dev="0a"
+
 
 class cw(gr.top_block):
 
@@ -141,8 +143,11 @@ class cw(gr.top_block):
         self.freq = freq
         self.osmosdr_sink_0.set_freq(self.freq, 0)
 
-def main(mesg, wordspm, frequency, device, top_block_cls=cw, options=None):
+def sigterm_handler(signal, frame):
+    print('Killed')
+    main.tb.stop()
 
+def main(mesg, wordspm, frequency, device, top_block_cls=cw, options=None):
     global morse
     global wpm
     global freq
@@ -163,10 +168,11 @@ def main(mesg, wordspm, frequency, device, top_block_cls=cw, options=None):
 
     morse=map(int,m_split)
 
-    tb = top_block_cls()
-    tb.start()
-    tb.wait()
+    main.tb = top_block_cls()
+    main.tb.start()
+    main.tb.wait()
 
+signal.signal(signal.SIGTERM, sigterm_handler)
 
 if __name__ == '__main__':
     parser = OptionParser(option_class=eng_option, usage="%prog: [options]")

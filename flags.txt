@@ -1,0 +1,3 @@
+shmoocon2020,1580497200,1580662800
+1,"marble cake also the game","cw",70,,60,120,146550,,
+2,"/home/corey/WCTF/challengectl/challenges/PSK31.wav","nbfm",48000,,30,120,146550,,
