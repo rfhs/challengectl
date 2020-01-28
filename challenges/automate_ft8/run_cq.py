@@ -2,12 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import time
-import threading
+#import threading
+from multiprocessing import Process
 import subprocess
 import os
 import re
 from datetime import datetime
 from ConfigParser import SafeConfigParser
+import ft8_rx
+import ft8_tx
 
 parser = SafeConfigParser()
 parser.read('/home/corey/automate_ft8/ft8_qso.conf')
@@ -25,23 +28,27 @@ snr = ''
 their_msg = ''
 
 
-def tx(e):
+def tx():
     global tx_cycle
-    while not e.isSet():
+    #while not e.isSet():
+    while True:
         print("\nStarting TX")
-        os.system('python ft8_tx.py ' + tx_cycle)  # 2> /dev/null')
+        ft8_tx.main(tx_cycle)
+        #os.system('python ft8_tx.py ' + tx_cycle)  # 2> /dev/null')
         time.sleep(8)
-        print("\nExiting TX")
+    print("\nExiting TX")
 
 
-def rx(e):
+def rx():
     global rx_cycle
-    while not e.isSet():
+    #while not e.isSet():
+    while True:
         print("\nStarting RX")
-        os.system('python ft8_rx.py ' + rx_cycle)  # 2> /dev/null')
+        ft8_rx.main(rx_cycle)
+        #os.system('python ft8_rx.py ' + rx_cycle)  # 2> /dev/null')
         parse_rx()
         time.sleep(8)
-        print("\nExiting RX")
+    print("\nExiting RX")
 
 
 class qso_tracker:
@@ -206,19 +213,23 @@ def main(extern_flag=None, extern_device=None): #extern_device not implemented
     if extern_flag != None:
         flag = extern_flag
     tx_cq(my_call, my_grid)
-    e = threading.Event()
-    t = threading.Thread(name='Transmit', target=tx, args=(e,))
-    r = threading.Thread(name='Receive', target=rx, args=(e,))
+    #e = threading.Event()
+    #t = threading.Thread(name='Transmit', target=tx, args=(e,))
+    #r = threading.Thread(name='Receive', target=rx, args=(e,))
+    t = Process(name='Transmit', target=tx)
+    r = Process(name='Receive', target=rx)
     t.daemon = True
     r.daemon = True
     t.start()
     r.start()
-
-    raw_input("\n\nPress Enter to Exit: ")
-    e.set()
-    print("\n\nKilling threads, plase wait")
     t.join()
     r.join()
+    
+    raw_input("\n\nPress Enter to Exit: ")
+    #e.set()
+    print("\n\nKilling threads, plase wait")
+    t.terminate()
+    r.terminate()
     quit()
 
 

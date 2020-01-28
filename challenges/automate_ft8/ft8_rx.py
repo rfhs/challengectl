@@ -23,11 +23,6 @@ import time
 from datetime import datetime
 import sys
 
-try:
-    cycle = sys.argv[1]
-except:
-    cycle = 'even'
-
 class ssb_rx_rec(gr.top_block):
 
     def __init__(self):
@@ -347,7 +342,7 @@ def check_time(cycle):
             print("Waiting for the top of the minute...")
             time.sleep(60 - now)
 
-def main(top_block_cls=ssb_rx_rec, options=None):
+def main(cycle, top_block_cls=ssb_rx_rec, options=None):
 
     tb = top_block_cls()
     check_time(cycle)
@@ -357,4 +352,8 @@ def main(top_block_cls=ssb_rx_rec, options=None):
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        cycle = sys.argv[1]
+    except:
+        cycle = 'even'
+    main(cycle)

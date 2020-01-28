@@ -22,11 +22,6 @@ import time
 from datetime import datetime
 import sys
 
-try:
-    cycle = sys.argv[1]
-except:
-    cycle = 'even'
-
 class usb_tx_bpf(gr.top_block):
 
     def __init__(self):
@@ -72,7 +67,7 @@ class usb_tx_bpf(gr.top_block):
         self._rf_gain_config.read(file_name)
         try: rf_gain = self._rf_gain_config.getfloat('tx', 'tx_rf_gain')
         except: rf_gain = 60
-        print("RF Gain: " + str(rf_gain))
+        #print("RF Gain: " + str(rf_gain))
         self.rf_gain = rf_gain
         self._offset_config = ConfigParser.ConfigParser()
         self._offset_config.read(file_name)
@@ -364,31 +359,41 @@ def check_time(cycle):
     now = float(datetime.now().strftime('%S.%f'))
     if cycle == 'odd':
         if now < 15:
-            print("Waiting for 15 second mark...")
+            if __name__ == '__main__':
+                print("Waiting for 15 second mark...")
             time.sleep(15-now)
         elif now >= 45:
-            print("Waiting for new minute...")
+            if __name__ == '__main__':
+                print("Waiting for new minute...")
             time.sleep(61-now)
             check_time('odd')
         else:
-            print("Waiting for 45 second mark...")
+            if __name__ == '__main__':
+                print("Waiting for 45 second mark...")
             time.sleep(45 - now)
     else:
         if now < 30:
-            print("Waiting for 30 second mark")
+            if __name__ == '__main__':
+                print("Waiting for 30 second mark")
             time.sleep((30-0.4)-now)
         else:
-            print("Waiting for the top of the minute...")
+            if __name__ == '__main__':
+                print("Waiting for the top of the minute...")
             time.sleep((60-0.4) - now)
 
-def main(top_block_cls=usb_tx_bpf, options=None):
+def main(cycle, top_block_cls=usb_tx_bpf, options=None):
 
     tb = top_block_cls()
     check_time(cycle)
-    print("\nTransmitting...")
+    if __name__ == '__main__':
+        print("\nTransmitting...")
     tb.start()
     tb.wait()
     tb.stop()
 
 if __name__ == '__main__':
-    main()
+    try:
+        cycle = sys.argv[1]
+    except:
+        cycle = 'even'
+    main(cycle)
