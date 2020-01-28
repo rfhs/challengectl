@@ -201,7 +201,10 @@ def parse_rx():
             calling_cq = True
 
 
-def main():
+def main(extern_flag=None, extern_device=None): #extern_device not implemented
+    global flag
+    if extern_flag != None:
+        flag = extern_flag
     tx_cq(my_call, my_grid)
     e = threading.Event()
     t = threading.Thread(name='Transmit', target=tx, args=(e,))
