@@ -62,7 +62,7 @@ class nbfm(gr.top_block):
                 taps=None,
                 fractional_bw=None,
         )
-        self.osmosdr_sink_0 = osmosdr.sink( args="numchan=" + str(1) + " " + dev )
+        self.osmosdr_sink_0 = osmosdr.sink( args="numchan=" + str(1) + " " + str(dev) )
         self.osmosdr_sink_0.set_sample_rate(samp_rate)
         self.osmosdr_sink_0.set_center_freq(freq, 0)
         self.osmosdr_sink_0.set_freq_corr(25, 0)
