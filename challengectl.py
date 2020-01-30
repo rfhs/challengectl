@@ -61,7 +61,9 @@ class transmitter:
         maxtime = flag_args[5]
         #print("I ran fire_cw with flag=" + str(flag) + " and freq=" +
         #str(freq) + " and speed=" + str(speed))
-        cw.main(flag, speed, freq, device)
+        p = Process(target=cw.main, args=(flag, speed, freq, device))
+        p.start()
+        p.join()
         sleep(3)
         device_q.put(device_id)
         sleep(randint(mintime, maxtime))
@@ -78,7 +80,9 @@ class transmitter:
         maxtime = flag_args[5]
         # print("I ran fire_neutron with flag=" + str(flag) + " and freq=" +
         # str(freq) + " and speed=" + str(speed))
-        neutron.main(flag.encode("hex"), speed, freq, device)
+        p = Process(target=neutron.main, args=(flag.encode("hex"), speed, freq, device))
+        p.start()
+        p.join()
         sleep(3)
         device_q.put(device_id)
         sleep(randint(mintime, maxtime))
@@ -158,7 +162,6 @@ def main():
     global conference
     device_Q = Queue()
     flag_Q = Queue()
-    joinq = Queue()
     flag_input = read_flags("flags.txt")
     conference = flag_input[0][0]
     if not os.path.exists(conference + ".db"):
@@ -178,14 +181,13 @@ def main():
 
     dev_available = device_Q.get()
     t = transmitter()
-    j = Joiner(joinq)
 
     while dev_available != None:
         chal_id = flag_Q.get()
         c.execute("SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,freq1 FROM flags WHERE chal_id=?", (chal_id,))
         current_chal = c.fetchone()
         p = Process(target=getattr(t,"fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
-        p.daemon = True
+        #p.daemon = True
         p.start()
         #p.join()
         # getattr(t,"fire_" + current_chal[0])(dev_available, flag_Q, device_Q, current_chal[1:])

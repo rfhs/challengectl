@@ -171,7 +171,6 @@ def main(mesg, wordspm, frequency, device, top_block_cls=cw, options=None):
     main.tb = top_block_cls()
     main.tb.start()
     main.tb.wait()
-    main.tb.stop()
 
 signal.signal(signal.SIGTERM, sigterm_handler)
 
