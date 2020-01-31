@@ -1,0 +1,22 @@
+HAM_QSO_RX,CQ K3CPK FM18,25,stat
+HAM_QSO_TX,HIDEYOKIDS,100,stat
+HAM_DIGITAL_1,Ham exams Saturday at 1300!,50,stat
+HAM_DIGITAL_2,We're not Wireless Village. We're RFHS!,100,stat
+HAM_DIGITAL_3,Fun fact! Shmoos are delicious to eat and eager to be eaten.,100
+TEMPEST_EASY,WHAT THREE WORDS,150,stat
+TEMPEST_MEDIUM,Stop the apple_blee crash.,300,stat
+TEMPEST_HARD,What is your favorite kind of cheesecake?,500
+SDR_1_DVBT1,Radio Bacon,50,stat
+SDR_1_DVBT2,Tacticool Internet,50,stat
+SDR_2_DVBT1,Angry Router,200,stat
+SDR_2_DVBT2,Cyber Pizza,50,stat
+SDR_5_MORSE_1,MARBLE CAKE ALSO THE GAME,25,stat
+SDR_6_MORSE_2,SHUT UP AND TAKE MY MONEY!,25,stat
+SDR_7_MORSE_3,CRYPTASTIC CRYPTO,50,stat
+SDR_8_MORSE_4,HEXIDECIMAL DONUTS,25,stat
+SDR_9_MORSE_5,ZERO IS MY HERO,50,stat
+SDR_10_MORSE_6,TAKE YOUR DAMN HAM EXAM.,25,stat
+SDR_11_ASK_1,What hath God wrought?,100,stat
+SDR_12_ASK_2,Binary Bolagna,200,stat
+SDR_13_ASK_3,I'm gonna prentend I'm happy even if it kills me.,200,stat
+SDR_14_ASK_4,Stop by Unallocated Space,400,stat

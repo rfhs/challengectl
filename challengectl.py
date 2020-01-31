@@ -120,6 +120,14 @@ class transmitter:
         sleep(randint(mintime, maxtime))
         flag_q.put(flag_args[0])
 
+def select_freq(band):
+    with open("frequencies.txt") as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if row[0] == band:
+                freq = randint(int(row[1]), int(row[2]))
+                return(freq)
+
 def read_flags(flags_file):
     flag_input = []
     with open(flags_file) as f:
@@ -186,11 +194,13 @@ def main():
         chal_id = flag_Q.get()
         c.execute("SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,freq1 FROM flags WHERE chal_id=?", (chal_id,))
         current_chal = c.fetchone()
+        current_chal = list(current_chal)
+        try:
+            current_chal[7] = int(current_chal[7])
+        except ValueError:
+            current_chal[7] = select_freq(current_chal[7])
         p = Process(target=getattr(t,"fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
-        #p.daemon = True
         p.start()
-        #p.join()
-        # getattr(t,"fire_" + current_chal[0])(dev_available, flag_Q, device_Q, current_chal[1:])
         dev_available = device_Q.get()
         sleep(1)
 
