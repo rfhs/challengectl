@@ -228,8 +228,8 @@ def main():
     dev_available = device_Q.get()
     t = transmitter()
 
-    dvbtp = Process(target=fire_dvbt)
-    dvbtp.start()
+    # dvbtp = Process(target=fire_dvbt)
+    # dvbtp.start()
 
     while dev_available != None:
         chal_id = flag_Q.get()
