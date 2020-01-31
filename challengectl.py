@@ -125,7 +125,7 @@ def fire_dvbt():
     global conference
     conn = sqlite3.connect(conference + ".db")
     c = conn.cursor()
-    c.execute('''SELECT chal_id FROM flags WHERE module=dvbt''')
+    c.execute('''SELECT chal_id FROM flags WHERE module="dvbt"''')
     flag_list = c.fetchall()
     for row in flag_list:
         dvbt_Q.put(row[0])
@@ -234,7 +234,7 @@ def main():
     while dev_available != None:
         chal_id = flag_Q.get()
         c.execute('''SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,
-        freq1 FROM flags WHERE chal_id=? AND module!=dvbt''', (chal_id,))
+        freq1 FROM flags WHERE chal_id=? AND module!="dvbt"''', (chal_id,))
         current_chal = c.fetchone()
         current_chal = list(current_chal)
         try:
