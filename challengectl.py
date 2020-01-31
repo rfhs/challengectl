@@ -120,6 +120,38 @@ class transmitter:
         sleep(randint(mintime, maxtime))
         flag_q.put(flag_args[0])
 
+def fire_dvbt():
+    dvbt_Q = Queue()
+    global conference
+    conn = sqlite3.connect(conference + ".db")
+    c = conn.cursor()
+    c.execute('''SELECT chal_id FROM flags WHERE module=dvbt''')
+    flag_list = c.fetchall()
+    for row in flag_list:
+        dvbt_Q.put(row[0])
+
+    while True:
+        chal_id = dvbt_Q.get()
+        c.execute('''SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,
+        freq1 FROM flags WHERE chal_id=?''', (chal_id,))
+        current_chal = c.fetchone()
+        current_chal = list(current_chal)
+        try:
+            freq = int(current_chal[7]) * 1000
+        except ValueError:
+            if current_chal[7] == dvbt_rand:
+                freq = select_dvbt("dvbt_" + str(randint(34, 69))) * 1000
+            else:
+                freq = select_dvbt(current_chal[7])
+        flag1 = str(current_chal[2])
+        flag2 = str(current_chal[3])
+        dev = "0"
+        #send-movie.sh flag1 flag2 dev freq
+        send_movie = "sh ./challenges/send-movie.sh " + flag1 + flag2 + dev + str(freq)
+        os.system(send_movie)
+        sleep(60)
+        dvbt_Q.put(current_chal[1])
+
 def select_freq(band):
     with open("frequencies.txt") as f:
         reader = csv.reader(f)
@@ -127,6 +159,12 @@ def select_freq(band):
             if row[0] == band:
                 freq = randint(int(row[1]), int(row[2]))
                 return(freq)
+def select_dvbt(channel):
+    with open("dvbt_channels.txt") as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if row[0] == channel:
+                return(int(row[1]))
 
 def read_flags(flags_file):
     flag_input = []
@@ -190,9 +228,13 @@ def main():
     dev_available = device_Q.get()
     t = transmitter()
 
+    dvbtp = Process(target=fire_dvbt)
+    dvbtp.start()
+
     while dev_available != None:
         chal_id = flag_Q.get()
-        c.execute("SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,freq1 FROM flags WHERE chal_id=?", (chal_id,))
+        c.execute('''SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,
+        freq1 FROM flags WHERE chal_id=? AND module!=dvbt''', (chal_id,))
         current_chal = c.fetchone()
         current_chal = list(current_chal)
         try:
