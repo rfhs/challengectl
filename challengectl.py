@@ -26,7 +26,7 @@ def build_database():
     minwait integer,maxwait integer,freq1,freq2,freq3)''')
     c.execute("CREATE TABLE flag_status(chal_id integer primary key,enabled,lastrun integer,ready)")
     c.execute("CREATE TABLE devices(dev_id integer primary key,dev_string,dev_busy)")
-    c.executemany("INSERT INTO flags VALUES (?,?,?,?,?,?,?,?,?,?)", flag_line)
+    c.executemany("INSERT INTO flags VALUES (?,?,?,?,?,?,?,?,?,?,?)", flag_line)
     c.executemany("INSERT INTO flag_status VALUES (?,1,'',1)", flag_line[:,:1])
     c.executemany("INSERT INTO devices VALUES (?,?,0)", devices)
     conn.commit()
