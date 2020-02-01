@@ -68,7 +68,6 @@ class transmitter:
         device_q.put(device_id)
         sleep(randint(mintime, maxtime))
         flag_q.put(flag_args[0])
-        os._exit(0)
 
     def fire_neutron(self, device_id, flag_q, device_q, *flag_args):
         flag_args = flag_args[0]
