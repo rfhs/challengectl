@@ -1,3 +1,4 @@
+shmoocon2020,1580497200,1580662800
 0,HAM_DIGITAL_1,/home/corey/WCTF/challengectl/challenges/shmoo2020/PSK31.wav,usb,48000,,60,180,ham_440,,
 1,HAM_DIGITAL_2,/home/corey/WCTF/challengectl/challenges/shmoo2020/MFSK16.wav,nbfm,48000,,60,180,146450,,
 2,HAM_DIGITAL_3,/home/corey/WCTF/challengectl/challenges/shmoo2020/QPSK63.wav,nbfm,48000,,60,180,ham_900,,
