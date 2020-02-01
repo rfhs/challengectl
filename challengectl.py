@@ -11,7 +11,7 @@ from bottle import route, run, template, get, post, static_file
 from multiprocessing import Process, Queue
 import numpy as np
 
-from challenges import ask,cw, neutron, usb_tx, nbfm
+from challenges import ask,cw, neutron, usb_tx, nbfm, spectrum_paint
 
 def build_database():
     flag_input = read_flags("flags.txt")
@@ -245,6 +245,7 @@ def main():
             current_chal[7] = freq_range[0]
             freq_or_range = str(freq_range[1]) + "-" + str(freq_range[2])
 
+        spectrum_paint.main(current_chal[7]*1000, dev_available)
         p = Process(target=getattr(t,"fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
         p.start()
         #we need a way to know if p.start errored or not
