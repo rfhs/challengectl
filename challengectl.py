@@ -158,7 +158,7 @@ def select_freq(band):
         for row in reader:
             if row[0] == band:
                 freq = randint(int(row[1]), int(row[2]))
-                return((freq,row[1],row[2])
+                return((freq,row[1],row[2]))
 def select_dvbt(channel):
     with open("dvbt_channels.txt") as f:
         reader = csv.reader(f)
