@@ -233,29 +233,35 @@ def main():
 
     # dvbtp = Process(target=fire_dvbt)
     # dvbtp.start()
+    try:
+        while dev_available != None:
+            chal_id = flag_Q.get()
+            c.execute('''SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,
+            freq1,chal_name FROM flags WHERE chal_id=? AND module!="dvbt"''', (chal_id,))
+            current_chal = c.fetchone()
+            current_chal = list(current_chal)
+            try:
+                current_chal[7] = int(current_chal[7])
+                freq_or_range = str(current_chal[7])
+            except ValueError:
+                freq_range = select_freq(current_chal[7])
+                current_chal[7] = freq_range[0]
+                freq_or_range = str(freq_range[1]) + "-" + str(freq_range[2])
 
-    while dev_available != None:
-        chal_id = flag_Q.get()
-        c.execute('''SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,
-        freq1,chal_name FROM flags WHERE chal_id=? AND module!="dvbt"''', (chal_id,))
-        current_chal = c.fetchone()
-        current_chal = list(current_chal)
-        try:
-            current_chal[7] = int(current_chal[7])
-            freq_or_range = str(current_chal[7])
-        except ValueError:
-            freq_range = select_freq(current_chal[7])
-            current_chal[7] = freq_range[0]
-            freq_or_range = str(freq_range[1]) + "-" + str(freq_range[2])
-
-        spectrum_paint.main(current_chal[7]*1000, fetch_device(dev_available))
-        p = Process(target=getattr(t,"fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
-        p.start()
-        #we need a way to know if p.start errored or not
-        os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_active")
-        os.system("timeout 15 ssh -F /root/wctf/liludallasmultipass/ssh/config -oStrictHostKeyChecking=no -oConnectTimeout=10 -oPasswordAuthentication=no -n scoreboard echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_active")
-        dev_available = device_Q.get()
-        sleep(1)
+            spectrum_paint.main(current_chal[7]*1000, fetch_device(dev_available))
+            p = Process(target=getattr(t,"fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
+            p.start()
+            #we need a way to know if p.start errored or not
+            os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_active")
+            os.system('''timeout 15 ssh -F /root/wctf/liludallasmultipass/ssh/config
+            -oStrictHostKeyChecking=no -oConnectTimeout=10 -oPasswordAuthentication=no
+            -n scoreboard echo ''' + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_active")
+            dev_available = device_Q.get()
+            sleep(1)
+    except KeyboardInterrupt:
+        p.join()
+        exit()
+        #dvbtp.join()
 
 
 if __name__ == '__main__':
