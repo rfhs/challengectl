@@ -36,9 +36,9 @@ class transmitter:
     #flag_args:chal_id,flag,modopt1,modopt2,minwait,maxwait,freq1
 
     def fire_ask(self, device_id, flag_q, device_q, *flag_args):
+        print("\nTransmitting ASK\n")
         flag_args = flag_args[0]
         device = fetch_device(device_id)
-        print(device)
         flag = flag_args[1]
         freq = int(flag_args[6]) * 1000
         mintime = flag_args[4]
@@ -51,6 +51,7 @@ class transmitter:
         flag_q.put(flag_args[0])
 
     def fire_cw(self, device_id, flag_q, device_q, *flag_args):
+        print("\nTransmitting CW\n")
         flag_args = flag_args[0]
         device = fetch_device(device_id)
         print(device)
@@ -70,6 +71,7 @@ class transmitter:
         flag_q.put(flag_args[0])
 
     def fire_neutron(self, device_id, flag_q, device_q, *flag_args):
+        print("\nTransmitting Neutron\n")
         flag_args = flag_args[0]
         device = fetch_device(device_id)
         flag = flag_args[1]
@@ -88,6 +90,7 @@ class transmitter:
         flag_q.put(flag_args[0])
 
     def fire_usb(self, device_id, flag_q, device_q, *flag_args):
+        print("\nTransmitting USB\n")
         flag_args = flag_args[0]
         device = fetch_device(device_id)
         wav_src = str(flag_args[1])
@@ -104,6 +107,7 @@ class transmitter:
         flag_q.put(flag_args[0])
 
     def fire_nbfm(self, device_id, flag_q, device_q, *flag_args):
+        print("\nTransmitting NBFM\n")
         flag_args = flag_args[0]
         device = fetch_device(device_id)
         wav_src = str(flag_args[1])
