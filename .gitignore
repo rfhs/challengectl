@@ -7,7 +7,6 @@ challenges/automate_ft8/*.pyc
 challenges/automate_ft8/captures/*
 *.db
 *.bak
-/flags.txt
 devices.txt
 
 .git/

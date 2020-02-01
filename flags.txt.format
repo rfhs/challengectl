@@ -1,2 +1,2 @@
 conference,starttime,endtime
-chal_id,flag,module,modopt1,modopt2,minwait,maxwait,freq1,freq2,freq3
+chal_id,chal_name,flag,module,modopt1,modopt2,minwait,maxwait,freq1,freq2,freq3
