@@ -239,10 +239,15 @@ def main():
         current_chal = list(current_chal)
         try:
             current_chal[7] = int(current_chal[7])
+            freq_or_range = current_chal[7]
         except ValueError:
+            freq_or_range = current_chal[7]
             current_chal[7] = select_freq(current_chal[7])
         p = Process(target=getattr(t,"fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
         p.start()
+        #we need a way to know if p.start errored or not
+        os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + challenge + "_active")
+        os.system("timeout 15 ssh -F /root/wctf/liludallasmultipass/ssh/config -oStrictHostKeyChecking=no -oConnectTimeout=10 -oPasswordAuthentication=no -n scoreboard echo " + freq_or_range + " > /run/shm/wctf_status/" + challenge + "_active")
         dev_available = device_Q.get()
         sleep(1)
 
