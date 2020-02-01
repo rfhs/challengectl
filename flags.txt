@@ -1,7 +1,7 @@
 shmoocon2020,1580497200,1580662800
-0,HAM_DIGITAL_1,/home/corey/WCTF/challengectl/challenges/shmoo2020/PSK31.wav,usb,48000,,60,180,ham_440,,
-1,HAM_DIGITAL_2,/home/corey/WCTF/challengectl/challenges/shmoo2020/MFSK16.wav,nbfm,48000,,60,180,146450,,
-2,HAM_DIGITAL_3,/home/corey/WCTF/challengectl/challenges/shmoo2020/QPSK63.wav,nbfm,48000,,60,180,ham_900,,
+0,HAM_DIGITAL_1,/home/pentoo/challengectl/challenges/shmoo2020/PSK31.wav,usb,48000,,60,180,ham_440,,
+1,HAM_DIGITAL_2,/home/pentoo/challengectl/challenges/shmoo2020/MFSK16.wav,nbfm,48000,,60,180,146450,,
+2,HAM_DIGITAL_3,/home/pentoo/challengectl/challenges/shmoo2020/QPSK63.wav,nbfm,48000,,60,180,ham_900,,
 5,SDR_5_MORSE_1,marble cake also the game,cw,70,,60,180,ham_144,,
 6,SDR_6_MORSE_2,Shut up and take my money!,cw,45,,60,180,ham_900,,
 7,SDR_7_MORSE_3,CRYPTASTIC CRYPTO,cw,100,,60,180,ham_144,,
