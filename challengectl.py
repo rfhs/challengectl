@@ -5,7 +5,7 @@ import os
 import datetime
 import csv
 from time import sleep
-from random import randint, choice
+from random import randint, choice, shuffle
 import sqlite3
 from bottle import route, run, template, get, post, static_file
 from multiprocessing import Process, Queue
@@ -225,8 +225,11 @@ def main():
 
     c.execute("SELECT chal_id FROM flag_status WHERE enabled=1")
     flag_list = c.fetchall()
+    flag_list = list(sum(flag_list, ()))
+    shuffle(flag_list)
+    print(flag_list)
     for row in flag_list:
-        flag_Q.put(row[0])
+        flag_Q.put(row)
 
     dev_available = device_Q.get()
     t = transmitter()
@@ -251,7 +254,7 @@ def main():
             spectrum_paint.main(current_chal[7]*1000, fetch_device(dev_available))
             p = Process(target=getattr(t,"fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
             p.start()
-            #we need a way to know if p.start errored or not
+            # #we need a way to know if p.start errored or not
             os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_active")
             os.system('''timeout 15 ssh -F /root/wctf/liludallasmultipass/ssh/config
             -oStrictHostKeyChecking=no -oConnectTimeout=10 -oPasswordAuthentication=no
