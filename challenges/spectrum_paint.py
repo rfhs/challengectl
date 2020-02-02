@@ -41,7 +41,7 @@ class spectrum_paint(gr.top_block):
         self.osmosdr_sink_0.set_sample_rate(samp_rate)
         self.osmosdr_sink_0.set_center_freq(frequency, 0)
         self.osmosdr_sink_0.set_freq_corr(0, 0)
-        self.osmosdr_sink_0.set_gain(43, 0)
+        self.osmosdr_sink_0.set_gain(46, 0)
         self.osmosdr_sink_0.set_if_gain(20, 0)
         self.osmosdr_sink_0.set_bb_gain(20, 0)
         self.osmosdr_sink_0.set_antenna('', 0)
