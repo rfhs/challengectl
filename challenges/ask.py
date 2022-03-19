@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
@@ -11,15 +11,16 @@ from gnuradio import eng_notation
 from gnuradio import gr
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
-from optparse import OptionParser
+# from optparse import OptionParser
 import osmosdr
 import time
 import numpy as np
 
-center_freq=0
-dev="0a"
-ask=()
-ask_code='0,'
+center_freq = 0
+dev = "0a"
+ask = ()
+ask_code = '0,'
+
 
 class russ_test(gr.top_block):
 
@@ -31,15 +32,15 @@ class russ_test(gr.top_block):
         ##################################################
         self.interp = interp = 600
         self.baud_rate = baud_rate = 3211
-        self.samp_rate_0 = samp_rate_0 = baud_rate*interp
-        self.samp_rate = samp_rate = baud_rate*interp
+        self.samp_rate_0 = samp_rate_0 = baud_rate * interp
+        self.samp_rate = samp_rate = baud_rate * interp
         self.center_freq = center_freq
         self.dev = dev
 
         ##################################################
         # Blocks
         ##################################################
-        self.osmosdr_sink_0 = osmosdr.sink( args="numchan=" + str(1) + " " + str(dev) )
+        self.osmosdr_sink_0 = osmosdr.sink(args="numchan=" + str(1) + " " + str(dev))
         self.osmosdr_sink_0.set_time_source("mimo", 0)
         self.osmosdr_sink_0.set_sample_rate(samp_rate)
         self.osmosdr_sink_0.set_center_freq(center_freq, 0)
@@ -50,11 +51,11 @@ class russ_test(gr.top_block):
         self.osmosdr_sink_0.set_antenna("", 0)
         self.osmosdr_sink_0.set_bandwidth(2000000, 0)
 
-        self.blocks_vector_source_x_0 = blocks.vector_source_c(ask + [0]*5321, False, 1, [])
-	#self.blocks_vector_source_x_0 = blocks.vector_source_c([1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]*10 + [0]*5321, False, 1, [])
-	#self.blocks_vector_source_x_0 = blocks.vector_source_c([ask]*10 + [0]*53321, False, 1, [])
-        self.blocks_repeat_0 = blocks.repeat(gr.sizeof_gr_complex*1, interp)
-        self.blocks_moving_average_xx_0 = blocks.moving_average_cc(20, 0.9/20, 4000)
+        self.blocks_vector_source_x_0 = blocks.vector_source_c(ask + [0] * 5321, False, 1, [])
+        # self.blocks_vector_source_x_0 = blocks.vector_source_c([1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]*10 + [0]*5321, False, 1, [])
+        # self.blocks_vector_source_x_0 = blocks.vector_source_c([ask]*10 + [0]*53321, False, 1, [])
+        self.blocks_repeat_0 = blocks.repeat(gr.sizeof_gr_complex * 1, interp)
+        self.blocks_moving_average_xx_0 = blocks.moving_average_cc(20, 0.9 / 20, 4000)
 
         ##################################################
         # Connections
@@ -68,16 +69,16 @@ class russ_test(gr.top_block):
 
     def set_interp(self, interp):
         self.interp = interp
-        self.set_samp_rate(self.baud_rate*self.interp)
-        self.set_samp_rate_0(self.baud_rate*self.interp)
+        self.set_samp_rate(self.baud_rate * self.interp)
+        self.set_samp_rate_0(self.baud_rate * self.interp)
 
     def get_baud_rate(self):
         return self.baud_rate
 
     def set_baud_rate(self, baud_rate):
         self.baud_rate = baud_rate
-        self.set_samp_rate(self.baud_rate*self.interp)
-        self.set_samp_rate_0(self.baud_rate*self.interp)
+        self.set_samp_rate(self.baud_rate * self.interp)
+        self.set_samp_rate_0(self.baud_rate * self.interp)
 
     def get_samp_rate_0(self):
         return self.samp_rate_0
@@ -132,23 +133,21 @@ def main(msg, freq, device, top_block_cls=russ_test, options=None):
     dev = device
     #msg = ""
 
-    ask_code='0,'
+    ask_code = '0,'
     #for char in options.msg:
-        #ask_code=ask_code+int(char)
+    #ask_code=ask_code+int(char)
 
     scale = 16
     num_of_bits = 8
-    str1=bin(int(msg, scale))[2:].zfill(num_of_bits)
+    str1 = bin(int(msg, scale))[2:].zfill(num_of_bits)
     tmp = ','.join(list(str1))
-    ask_code=ask_code+tmp+',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
+    ask_code = ask_code + tmp + ',0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
 
-
-    ask_split=ask_code.split(',')
+    ask_split = ask_code.split(',')
 
     #ask=([1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1,0,1,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])*10
 
-
-    ask=map(int,ask_split)*10
+    ask = list(map(int, ask_split)) * 10
 
     center_freq = freq
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
@@ -13,8 +13,8 @@ from gnuradio import filter
 from gnuradio import gr
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
-from optparse import OptionParser
-import ConfigParser
+# from optparse import OptionParser
+import configparser
 import osmosdr
 import time
 
@@ -28,41 +28,49 @@ class nbfm(gr.top_block):
         # Variables
         ##################################################
         self.filename = filename = "nbfm_tx.conf"
-        #self.wav_samp_rate = wav_samp_rate = 48000
-        #self.wav_file = wav_file = ""
-        self._samp_rate_config = ConfigParser.ConfigParser()
+        # self.wav_samp_rate = wav_samp_rate = 48000
+        # self.wav_file = wav_file = ""
+        self._samp_rate_config = configparser.ConfigParser()
         self._samp_rate_config.read(filename)
-        try: samp_rate = self._samp_rate_config.getint('main', 'samp_rate')
-        except: samp_rate = int(2.4e6)
+        try:
+            samp_rate = self._samp_rate_config.getint('main', 'samp_rate')
+        except:
+            samp_rate = int(2.4e6)
         self.samp_rate = samp_rate
-        self._rf_gain_config = ConfigParser.ConfigParser()
+        self._rf_gain_config = configparser.ConfigParser()
         self._rf_gain_config.read(filename)
-        try: rf_gain = self._rf_gain_config.getfloat('main', 'tx_rf_gain')
-        except: rf_gain = 14
+        try:
+            rf_gain = self._rf_gain_config.getfloat('main', 'tx_rf_gain')
+        except:
+            rf_gain = 14
         self.rf_gain = rf_gain
-        self._if_gain_config = ConfigParser.ConfigParser()
+        self._if_gain_config = configparser.ConfigParser()
         self._if_gain_config.read(filename)
-        try: if_gain = self._if_gain_config.getfloat('main', 'tx_if_gain')
-        except: if_gain = 32
+        try:
+            if_gain = self._if_gain_config.getfloat('main', 'tx_if_gain')
+        except:
+            if_gain = 32
         self.if_gain = if_gain
-        #self.freq = freq = 0
-        #self.dev = dev = ""
-        self._bb_gain_config = ConfigParser.ConfigParser()
+        # self.freq = freq = 0
+        # self.dev = dev = ""
+        self._bb_gain_config = configparser.ConfigParser()
         self._bb_gain_config.read(filename)
-        try: bb_gain = self._bb_gain_config.getfloat('main', 'tx_bb_gain')
-        except: bb_gain = 32
+        try:
+            bb_gain = self._bb_gain_config.getfloat('main', 'tx_bb_gain')
+        except:
+            bb_gain = 32
         self.bb_gain = bb_gain
 
         ##################################################
         # Blocks
         ##################################################
         self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
-                interpolation=samp_rate,
-                decimation=int(240e3),
-                taps=None,
-                fractional_bw=None,
+            interpolation=samp_rate,
+            decimation=int(240e3),
+            taps=None,
+            fractional_bw=None,
         )
-        self.osmosdr_sink_0 = osmosdr.sink( args="numchan=" + str(1) + " " + str(dev) )
+        self.osmosdr_sink_0 = osmosdr.sink(args="numchan=" + str(1) + " " + str(dev))
         self.osmosdr_sink_0.set_sample_rate(samp_rate)
         self.osmosdr_sink_0.set_center_freq(freq, 0)
         self.osmosdr_sink_0.set_freq_corr(25, 0)
@@ -75,14 +83,12 @@ class nbfm(gr.top_block):
         self.blocks_wavfile_source_0 = blocks.wavfile_source(wav_file, False)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((0.7, ))
         self.analog_nbfm_tx_0 = analog.nbfm_tx(
-        	audio_rate=wav_samp_rate,
-        	quad_rate=int(240e3),
-        	tau=75e-6,
-        	max_dev=5e3,
-        	fh=-1.0,
-                )
-
-
+            audio_rate=wav_samp_rate,
+            quad_rate=int(240e3),
+            tau=75e-6,
+            max_dev=5e3,
+            fh=-1.0,
+        )
 
         ##################################################
         # Connections
@@ -97,28 +103,32 @@ class nbfm(gr.top_block):
 
     def set_filename(self, filename):
         self.filename = filename
-        self._samp_rate_config = ConfigParser.ConfigParser()
+        self._samp_rate_config = configparser.ConfigParser()
         self._samp_rate_config.read(self.filename)
         if not self._samp_rate_config.has_section('main'):
-        	self._samp_rate_config.add_section('main')
+            self._samp_rate_config.add_section('main')
+
         self._samp_rate_config.set('main', 'samp_rate', str(None))
         self._samp_rate_config.write(open(self.filename, 'w'))
-        self._rf_gain_config = ConfigParser.ConfigParser()
+        self._rf_gain_config = configparser.ConfigParser()
         self._rf_gain_config.read(self.filename)
         if not self._rf_gain_config.has_section('main'):
-        	self._rf_gain_config.add_section('main')
+            self._rf_gain_config.add_section('main')
+
         self._rf_gain_config.set('main', 'tx_rf_gain', str(None))
         self._rf_gain_config.write(open(self.filename, 'w'))
-        self._if_gain_config = ConfigParser.ConfigParser()
+        self._if_gain_config = configparser.ConfigParser()
         self._if_gain_config.read(self.filename)
         if not self._if_gain_config.has_section('main'):
-        	self._if_gain_config.add_section('main')
+            self._if_gain_config.add_section('main')
+
         self._if_gain_config.set('main', 'tx_if_gain', str(None))
         self._if_gain_config.write(open(self.filename, 'w'))
-        self._bb_gain_config = ConfigParser.ConfigParser()
+        self._bb_gain_config = configparser.ConfigParser()
         self._bb_gain_config.read(self.filename)
         if not self._bb_gain_config.has_section('main'):
-        	self._bb_gain_config.add_section('main')
+            self._bb_gain_config.add_section('main')
+
         self._bb_gain_config.set('main', 'tx_bb_gain', str(None))
         self._bb_gain_config.write(open(self.filename, 'w'))
 

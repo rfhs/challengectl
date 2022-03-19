@@ -1,20 +1,21 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 #main file
 
 import os
 # import sys
-import datetime
+# import datetime
 import csv
 from time import sleep
 from random import randint, choice, shuffle
 import sqlite3
-from bottle import route, run, template, get, post, static_file
+# from bottle import route, run, template, get, post, static_file
 from multiprocessing import Process, Queue
 import numpy as np
 
-from challenges import ask,cw, neutron, usb_tx, nbfm, spectrum_paint
+from challenges import ask, cw, usb_tx, nbfm, spectrum_paint
+
 
 def build_database():
     flag_input = read_flags("flags.txt")
@@ -30,13 +31,14 @@ def build_database():
     c.execute("CREATE TABLE flag_status(chal_id integer primary key,enabled,lastrun integer,ready)")
     c.execute("CREATE TABLE devices(dev_id integer primary key,dev_string,dev_busy)")
     c.executemany("INSERT INTO flags VALUES (?,?,?,?,?,?,?,?,?,?,?)", flag_line)
-    c.executemany("INSERT INTO flag_status VALUES (?,1,'',1)", flag_line[:,:1])
+    c.executemany("INSERT INTO flag_status VALUES (?,1,'',1)", flag_line[:, :1])
     c.executemany("INSERT INTO devices VALUES (?,?,0)", devices)
     conn.commit()
     conn.close()
 
+
 class transmitter:
-    #flag_args:chal_id,flag,modopt1,modopt2,minwait,maxwait,freq1
+    # flag_args:chal_id,flag,modopt1,modopt2,minwait,maxwait,freq1
 
     def fire_ask(self, device_id, flag_q, device_q, *flag_args):
         print("\nTransmitting ASK\n")
@@ -46,7 +48,7 @@ class transmitter:
         freq = int(flag_args[6]) * 1000
         mintime = flag_args[4]
         maxtime = flag_args[5]
-        #print("I ran fire_ask with flag=" + str(flag) + " and freq=" + str(freq))
+        # print("I ran fire_ask with flag=" + str(flag) + " and freq=" + str(freq))
         ask.main(flag.encode("hex"), freq, device)
         sleep(3)
         device_q.put(device_id)
@@ -63,8 +65,8 @@ class transmitter:
         freq = int(flag_args[6]) * 1000
         mintime = flag_args[4]
         maxtime = flag_args[5]
-        #print("I ran fire_cw with flag=" + str(flag) + " and freq=" +
-        #str(freq) + " and speed=" + str(speed))
+        # print("I ran fire_cw with flag=" + str(flag) + " and freq=" +
+        # str(freq) + " and speed=" + str(speed))
         p = Process(target=cw.main, args=(flag, speed, freq, device))
         p.start()
         p.join()
@@ -73,24 +75,24 @@ class transmitter:
         sleep(randint(mintime, maxtime))
         flag_q.put(flag_args[0])
 
-    def fire_neutron(self, device_id, flag_q, device_q, *flag_args):
-        print("\nTransmitting Neutron\n")
-        flag_args = flag_args[0]
-        device = fetch_device(device_id)
-        flag = flag_args[1]
-        speed = int(flag_args[2])
-        freq = int(flag_args[6]) * 1000
-        mintime = flag_args[4]
-        maxtime = flag_args[5]
-        # print("I ran fire_neutron with flag=" + str(flag) + " and freq=" +
-        # str(freq) + " and speed=" + str(speed))
-        p = Process(target=neutron.main, args=(flag.encode("hex"), speed, freq, device))
-        p.start()
-        p.join()
-        sleep(3)
-        device_q.put(device_id)
-        sleep(randint(mintime, maxtime))
-        flag_q.put(flag_args[0])
+    # def fire_neutron(self, device_id, flag_q, device_q, *flag_args):
+    #     print("\nTransmitting Neutron\n")
+    #     flag_args = flag_args[0]
+    #     device = fetch_device(device_id)
+    #     flag = flag_args[1]
+    #     speed = int(flag_args[2])
+    #     freq = int(flag_args[6]) * 1000
+    #     mintime = flag_args[4]
+    #     maxtime = flag_args[5]
+    #     # print("I ran fire_neutron with flag=" + str(flag) + " and freq=" +
+    #     # str(freq) + " and speed=" + str(speed))
+    #     p = Process(target=neutron.main, args=(flag.encode("hex"), speed, freq, device))
+    #     p.start()
+    #     p.join()
+    #     sleep(3)
+    #     device_q.put(device_id)
+    #     sleep(randint(mintime, maxtime))
+    #     flag_q.put(flag_args[0])
 
     def fire_usb(self, device_id, flag_q, device_q, *flag_args):
         print("\nTransmitting USB\n")
@@ -126,37 +128,38 @@ class transmitter:
         sleep(randint(mintime, maxtime))
         flag_q.put(flag_args[0])
 
-def fire_dvbt():
-    dvbt_Q = Queue()
-    global conference
-    conn = sqlite3.connect(conference + ".db")
-    c = conn.cursor()
-    c.execute('''SELECT chal_id FROM flags WHERE module="dvbt"''')
-    flag_list = c.fetchall()
-    for row in flag_list:
-        dvbt_Q.put(row[0])
+# def fire_dvbt():
+#     dvbt_Q = Queue()
+#     global conference
+#     conn = sqlite3.connect(conference + ".db")
+#     c = conn.cursor()
+#     c.execute('''SELECT chal_id FROM flags WHERE module="dvbt"''')
+#     flag_list = c.fetchall()
+#     for row in flag_list:
+#         dvbt_Q.put(row[0])
+#
+#     while True:
+#         chal_id = dvbt_Q.get()
+#         c.execute('''SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,
+#         freq1 FROM flags WHERE chal_id=?''', (chal_id,))
+#         current_chal = c.fetchone()
+#         current_chal = list(current_chal)
+#         try:
+#             freq = int(current_chal[7]) * 1000
+#         except ValueError:
+#             if current_chal[7] == dvbt_rand:
+#                 freq = select_dvbt("dvbt_" + str(randint(34, 69))) * 1000
+#             else:
+#                 freq = select_dvbt(current_chal[7])
+#         flag1 = str(current_chal[2])
+#         flag2 = str(current_chal[3])
+#         dev = "0"
+#         #send-movie.sh flag1 flag2 dev freq
+#         send_movie = "sh ./challenges/send-movie.sh " + flag1 + flag2 + dev + str(freq)
+#         os.system(send_movie)
+#         sleep(60)
+#         dvbt_Q.put(current_chal[1])
 
-    while True:
-        chal_id = dvbt_Q.get()
-        c.execute('''SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,
-        freq1 FROM flags WHERE chal_id=?''', (chal_id,))
-        current_chal = c.fetchone()
-        current_chal = list(current_chal)
-        try:
-            freq = int(current_chal[7]) * 1000
-        except ValueError:
-            if current_chal[7] == dvbt_rand:
-                freq = select_dvbt("dvbt_" + str(randint(34, 69))) * 1000
-            else:
-                freq = select_dvbt(current_chal[7])
-        flag1 = str(current_chal[2])
-        flag2 = str(current_chal[3])
-        dev = "0"
-        #send-movie.sh flag1 flag2 dev freq
-        send_movie = "sh ./challenges/send-movie.sh " + flag1 + flag2 + dev + str(freq)
-        os.system(send_movie)
-        sleep(60)
-        dvbt_Q.put(current_chal[1])
 
 def select_freq(band):
     with open("frequencies.txt") as f:
@@ -164,13 +167,16 @@ def select_freq(band):
         for row in reader:
             if row[0] == band:
                 freq = randint(int(row[1]), int(row[2]))
-                return((freq,row[1],row[2]))
+                return((freq, row[1], row[2]))
+
+
 def select_dvbt(channel):
     with open("dvbt_channels.txt") as f:
         reader = csv.reader(f)
         for row in reader:
             if row[0] == channel:
                 return(int(row[1]))
+
 
 def read_flags(flags_file):
     flag_input = []
@@ -180,6 +186,7 @@ def read_flags(flags_file):
             flag_input.append(row)
     return flag_input
 
+
 def read_devices(devices_file):
     devices_input = []
     with open(devices_file) as f:
@@ -187,6 +194,7 @@ def read_devices(devices_file):
         for row in reader:
             devices_input.append(row)
     return devices_input
+
 
 def fetch_device(dev_id):
     global conference
@@ -197,18 +205,22 @@ def fetch_device(dev_id):
     conn.close()
     return device[0]
 
-@get('/')
-def index_html():
-    global conference
-    return template('index.tpl', {'conference': conference})
 
-@get('/flag_manager')
-def flag_mgr():
-    return template('flag_manager.tpl')
+# @get('/')
+# def index_html():
+#     global conference
+#     return template('index.tpl', {'conference': conference})
+#
+#
+# @get('/flag_manager')
+# def flag_mgr():
+#     return template('flag_manager.tpl')
+#
+#
+# @route('/static/<filepath:path>', name='static')
+# def server_static(filepath):
+#     return static_file(filepath, root='./static')
 
-@route('/static/<filepath:path>', name='static')
-def server_static(filepath):
-    return static_file(filepath, root='./static')
 
 def main():
     global conference
@@ -254,8 +266,8 @@ def main():
                 current_chal[7] = freq_range[0]
                 freq_or_range = str(freq_range[1]) + "-" + str(freq_range[2])
 
-            spectrum_paint.main(current_chal[7]*1000, fetch_device(dev_available))
-            p = Process(target=getattr(t,"fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
+            spectrum_paint.main(current_chal[7] * 1000, fetch_device(dev_available))
+            p = Process(target=getattr(t, "fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
             p.start()
             # #we need a way to know if p.start errored or not
             os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
