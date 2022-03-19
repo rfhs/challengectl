@@ -1,5 +1,5 @@
 testall,1580497200,1580662800
-0,HAM_DIGITAL_1,challenges/shmoo2020/PSK31.wav,usb,48000,,90,180,ham_440,,
+0,HAM_DIGITAL_1,challenges/shmoo2020/PSK31.wav,usb,48000,,90,180,146450,,
 1,HAM_DIGITAL_2,challenges/shmoo2020/MFSK16.wav,nbfm,48000,,90,180,146450,,
-2,SDR_5_MORSE_1,marble cake also the game,cw,70,,90,180,ham_144,,
-3,SDR_11_ASK_1,What hath God wrought?,ask,,,30,90,146650,,
+2,SDR_5_MORSE_1,marble cake also the game,cw,70,,90,180,146450,,
+3,SDR_11_ASK_1,What hath God wrought?,ask,,,30,90,146450,,
