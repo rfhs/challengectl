@@ -49,7 +49,7 @@ class transmitter:
         mintime = flag_args[4]
         maxtime = flag_args[5]
         # print("I ran fire_ask with flag=" + str(flag) + " and freq=" + str(freq))
-        ask.main(flag.encode("hex"), freq, device)
+        ask.main(flag.encode("utf-8").hex(), freq, device)
         sleep(3)
         device_q.put(device_id)
         sleep(randint(mintime, maxtime))
@@ -86,7 +86,7 @@ class transmitter:
     #     maxtime = flag_args[5]
     #     # print("I ran fire_neutron with flag=" + str(flag) + " and freq=" +
     #     # str(freq) + " and speed=" + str(speed))
-    #     p = Process(target=neutron.main, args=(flag.encode("hex"), speed, freq, device))
+    #     p = Process(target=neutron.main, args=(flag.encode("utf-8").hex(), speed, freq, device))
     #     p.start()
     #     p.join()
     #     sleep(3)
@@ -270,8 +270,8 @@ def main():
             p = Process(target=getattr(t, "fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
             p.start()
             # #we need a way to know if p.start errored or not
-            os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
-            os.system('''timeout 15 ssh -F /root/wctf/liludallasmultipass/ssh/config -oStrictHostKeyChecking=no -oConnectTimeout=10 -oPasswordAuthentication=no -n scoreboard echo ''' + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
+            # os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
+            # os.system('''timeout 15 ssh -F /root/wctf/liludallasmultipass/ssh/config -oStrictHostKeyChecking=no -oConnectTimeout=10 -oPasswordAuthentication=no -n scoreboard echo ''' + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
             dev_available = device_Q.get()
             sleep(1)
     except KeyboardInterrupt:
