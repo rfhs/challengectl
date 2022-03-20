@@ -4,8 +4,9 @@
 #main file
 
 import os
-# import sys
+import sys
 # import datetime
+import signal
 import csv
 from time import sleep
 from random import randint, choice, shuffle
@@ -17,11 +18,11 @@ import numpy as np
 from challenges import ask, cw, usb_tx, nbfm, spectrum_paint
 
 
-def build_database():
-    flag_input = read_flags("flags.txt")
+def build_database(flagfile, devicefile):
+    flag_input = read_flags(flagfile)
     flag_line = np.asarray(flag_input[1:])
 
-    devices = read_devices("devices.txt")
+    devices = read_devices(devicefile)
 
     conference = flag_input[0][0]
     conn = sqlite3.connect(conference + ".db")
@@ -222,14 +223,14 @@ def fetch_device(dev_id):
 #     return static_file(filepath, root='./static')
 
 
-def main():
+def main(flagfile, devicefile):
     global conference
     device_Q = Queue()
     flag_Q = Queue()
-    flag_input = read_flags("flags.txt")
+    flag_input = read_flags(flagfile)
     conference = flag_input[0][0]
     if not os.path.exists(conference + ".db"):
-        build_database()
+        build_database(flagfile, devicefile)
     conn = sqlite3.connect(conference + ".db")
     c = conn.cursor()
 
@@ -266,8 +267,12 @@ def main():
                 current_chal[7] = freq_range[0]
                 freq_or_range = str(freq_range[1]) + "-" + str(freq_range[2])
 
-            spectrum_paint.main(current_chal[7] * 1000, fetch_device(dev_available))
-            p = Process(target=getattr(t, "fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
+            print("\nPainting Waterfall\n")
+            # spectrum_paint.main(current_chal[7] * 1000, fetch_device(dev_available))
+            p = Process(target=spectrum_paint.main, args=(current_chal[7] * 1000, fetch_device(dev_available)))  # , daemon=True)
+            p.start()
+            p.join()
+            p = Process(target=getattr(t, "fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]), daemon=True)
             p.start()
             # #we need a way to know if p.start errored or not
             # os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
@@ -275,11 +280,28 @@ def main():
             dev_available = device_Q.get()
             sleep(1)
     except KeyboardInterrupt:
-        p.join()
-        exit()
+        print("Trying to Exit!")
+        try:
+            p.terminate()
+            p.join()
+        except UnboundLocalError:
+            pass
+        finally:
+            exit()
         #dvbtp.join()
 
 
+# def sigterm_handler(signal, frame):
+#     print('Killed')
+#     os.kill(os.getpid(), signal.SIGTERM)
+#
+#
+# signal.signal(signal.SIGTERM, sigterm_handler)
+
 if __name__ == '__main__':
-    #run(host='localhost', port=8080)
-    main()
+    # run(host='localhost', port=8080)
+    try:
+        main(sys.argv[1], sys.argv[2])
+    except IndexError:
+        print("Usage:")
+        print("challengectl.py [flags file] [device file]")

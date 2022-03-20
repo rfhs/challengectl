@@ -145,9 +145,9 @@ class cw(gr.top_block):
         self.osmosdr_sink_0.set_freq(self.freq, 0)
 
 
-def sigterm_handler(signal, frame):
-    print('Killed')
-    main.tb.stop()
+# def sigterm_handler(signal, frame):
+#     print('Killed')
+#     main.tb.stop()
 
 
 def main(mesg, wordspm, frequency, device, top_block_cls=cw, options=None):
@@ -176,7 +176,7 @@ def main(mesg, wordspm, frequency, device, top_block_cls=cw, options=None):
     main.tb.wait()
 
 
-signal.signal(signal.SIGTERM, sigterm_handler)
+# signal.signal(signal.SIGTERM, sigterm_handler)
 
 if __name__ == '__main__':
     parser = OptionParser(option_class=eng_option, usage="%prog: [options]")

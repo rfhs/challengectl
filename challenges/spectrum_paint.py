@@ -13,6 +13,7 @@ from gnuradio import gr
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
 from optparse import OptionParser
+import signal
 import osmosdr
 import paint
 import pmt
@@ -81,6 +82,11 @@ class spectrum_paint(gr.top_block):
         self.dev = dev
 
 
+# def sigterm_handler(signal, frame):
+#     print('Killed')
+#     main.tb.stop()
+
+
 def main(freq, device, top_block_cls=spectrum_paint, options=None):
 
     global frequency
@@ -92,6 +98,8 @@ def main(freq, device, top_block_cls=spectrum_paint, options=None):
     tb.start()
     tb.wait()
 
+
+# signal.signal(signal.SIGTERM, sigterm_handler)
 
 if __name__ == '__main__':
     main()
