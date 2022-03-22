@@ -272,7 +272,7 @@ def main(flagfile, devicefile):
             p = Process(target=spectrum_paint.main, args=(current_chal[7] * 1000, fetch_device(dev_available)))  # , daemon=True)
             p.start()
             p.join()
-            p = Process(target=getattr(t, "fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]), daemon=True)
+            p = Process(target=getattr(t, "fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
             p.start()
             # #we need a way to know if p.start errored or not
             # os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
