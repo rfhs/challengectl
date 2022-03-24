@@ -191,7 +191,7 @@ def read_flags(flags_file):
 def read_devices(devices_file):
     devices_input = []
     with open(devices_file) as f:
-        reader = csv.reader(f)
+        reader = csv.reader(f, quotechar='"')
         for row in reader:
             devices_input.append(row)
     return devices_input
