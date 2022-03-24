@@ -7,5 +7,6 @@ challenges/automate_ft8/captures/*
 *.db
 *.bak
 devices.txt
+test_*
 
 .git/
