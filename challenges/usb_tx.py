@@ -46,7 +46,8 @@ class usb_tx(gr.top_block):
         try:
             rf_gain = self._rf_gain_config.getfloat('tx', 'tx_rf_gain')
         except:
-            rf_gain = 10
+            rf_gain = 43
+        print(f"RF Gain: {rf_gain}")
         self.rf_gain = rf_gain
         self._offset_config = configparser.ConfigParser()
         self._offset_config.read(file_name)

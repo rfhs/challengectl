@@ -42,7 +42,8 @@ class nbfm(gr.top_block):
         try:
             rf_gain = self._rf_gain_config.getfloat('main', 'tx_rf_gain')
         except:
-            rf_gain = 14
+            rf_gain = 43
+        print(f"RF Gain: {rf_gain}")
         self.rf_gain = rf_gain
         self._if_gain_config = configparser.ConfigParser()
         self._if_gain_config.read(filename)
