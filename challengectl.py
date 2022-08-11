@@ -267,7 +267,7 @@ def main(flagfile, devicefile):
                 current_chal[7] = freq_range[0]
                 freq_or_range = str(freq_range[1]) + "-" + str(freq_range[2])
 
-            print("\nPainting Waterfall\n")
+            print(f"\nPainting Waterfall on {current_chal[7]}\n")
             # spectrum_paint.main(current_chal[7] * 1000, fetch_device(dev_available))
             p = Process(target=spectrum_paint.main, args=(current_chal[7] * 1000, fetch_device(dev_available)))  # , daemon=True)
             p.start()
