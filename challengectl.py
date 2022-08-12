@@ -15,7 +15,7 @@ import sqlite3
 from multiprocessing import Process, Queue
 import numpy as np
 
-from challenges import ask, cw, usb_tx, nbfm, spectrum_paint
+from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom
 
 
 def build_database(flagfile, devicefile):
@@ -160,6 +160,30 @@ class transmitter:
 #         os.system(send_movie)
 #         sleep(60)
 #         dvbt_Q.put(current_chal[1])
+
+    def fire_pocsag(self, device_id, flag_q, device_q, *flag_args):
+        print("\nTransmitting POCSAG\n")
+        flag_args = flag_args[0]
+        device = fetch_device(device_id)
+        # Parse options from flag_args
+        flag = flag_args[1]
+        modopt1 = flag_args[2]
+        mintime = flag_args[4]
+        maxtime = flag_args[5]
+        freq = int(flag_args[6]) * 1000
+        # Configure options specific to pocsagtx_osmocom script
+        pocsagopts = pocsagtx_osmocom.argument_parser().parse_args('')
+        pocsagopts.deviceargs = "hackrf=0"
+        pocsagopts.samp_rate = 1000000.0
+        pocsagopts.pagerfreq = freq
+        pocsagopts.capcode = int(modopt1)
+        pocsagopts.message = flag
+        # Call main in pocsagtx_osmocom, passing in pocsagopts options array
+        pocsagtx_osmocom.main(options=pocsagopts)
+        sleep(3)
+        device_q.put(device_id)
+        sleep(randint(mintime, maxtime))
+        flag_q.put(flag_args[0])
 
 
 def select_freq(band):

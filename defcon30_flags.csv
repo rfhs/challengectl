@@ -14,3 +14,4 @@ defcon30,1660312800,1660496400
 13,SDR_ASK_3,Check out the new water features in the casinos.,ask,,,60,90,448950,,
 14,SDR_ASK_4,Rent a kayak to paddle down the strip.,ask,,,60,90,ham_900,,
 15,HAM_SSTV_1,challenges/defcon30/robot36.wav,usb,48000,,60,90,ham_440,,
+16,POCSAG_RX,This RF HOM3C0MING is in El Dorado,pocsag,301946,,60,90,444500,,
