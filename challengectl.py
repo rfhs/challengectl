@@ -10,12 +10,15 @@ import signal
 import csv
 from time import sleep
 from random import randint, choice, shuffle
+import random
 import sqlite3
 # from bottle import route, run, template, get, post, static_file
 from multiprocessing import Process, Queue
 import numpy as np
+import subprocess
+import string
 
-from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom
+from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
 
 
 def build_database(flagfile, devicefile):
@@ -181,6 +184,45 @@ class transmitter:
         # Call main in pocsagtx_osmocom, passing in pocsagopts options array
         pocsagtx_osmocom.main(options=pocsagopts)
         sleep(3)
+        device_q.put(device_id)
+        sleep(randint(mintime, maxtime))
+        flag_q.put(flag_args[0])
+
+    def fire_lrs(self, device_id, flag_q, device_q, *flag_args):
+        print("\nTransmitting LRS\n")
+        flag_args = flag_args[0]
+        device = fetch_device(device_id)
+        # Parse options from flag_args
+        # For LRS, flag will be used to pass in the raw string of command args
+        flag = flag_args[1]
+        # modopt1 = flag_args[2]
+        mintime = flag_args[4]
+        maxtime = flag_args[5]
+        freq = int(flag_args[6]) * 1000
+        # Configure options specific to lrs_pager script
+        lrspageropts = lrs_pager.argument_parser().parse_args(flag.split())
+        # Generate pager.bin file
+        # Generate random filename in /tmp/ for pager bin file
+        randomstring = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        outfile = "/tmp/lrs_{}.bin".format(randomstring)
+        lrspageropts.outputfile = outfile
+        lrs_pager.main(options=lrspageropts)
+
+        # Configure options specific to lrs_tx script
+        lrsopts = lrs_tx.argument_parser().parse_args('')
+        lrsopts.deviceargs = device
+        lrsopts.freq = freq
+        lrsopts.binfile = outfile
+        # Gains below are defaults, added in case they need to be changed
+        # lrsopts.bbgain = 20.0
+        # lrsopts.ifgain = 20.0
+        # lrsopts.rfgain = 47.0
+
+        # Call main in pocsagtx_osmocom, passing in lrsopts options array
+        lrs_tx.main(options=lrsopts)
+        sleep(3)
+        # Delete pager bin file from /tmp/
+        os.remove(outfile)
         device_q.put(device_id)
         sleep(randint(mintime, maxtime))
         flag_q.put(flag_args[0])
