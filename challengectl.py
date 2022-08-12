@@ -220,7 +220,7 @@ class transmitter:
 
         # Call main in pocsagtx_osmocom, passing in lrsopts options array
         lrs_tx.main(options=lrsopts)
-        sleep(3)
+        sleep(5)
         # Delete pager bin file from /tmp/
         os.remove(outfile)
         device_q.put(device_id)
