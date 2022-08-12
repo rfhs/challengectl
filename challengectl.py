@@ -176,7 +176,7 @@ class transmitter:
         freq = int(flag_args[6]) * 1000
         # Configure options specific to pocsagtx_osmocom script
         pocsagopts = pocsagtx_osmocom.argument_parser().parse_args('')
-        pocsagopts.deviceargs = "hackrf=0"
+        pocsagopts.deviceargs = device
         pocsagopts.samp_rate = 1000000.0
         pocsagopts.pagerfreq = freq
         pocsagopts.capcode = int(modopt1)
