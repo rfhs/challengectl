@@ -48,7 +48,7 @@ class spectrum_paint(gr.top_block):
         self.osmosdr_sink_0.set_antenna('', 0)
         self.osmosdr_sink_0.set_bandwidth(0, 0)
 
-        self.digital_ofdm_cyclic_prefixer_0 = digital.ofdm_cyclic_prefixer(4096, 4096 + 4096 / 8, 0, '')
+        self.digital_ofdm_cyclic_prefixer_0 = digital.ofdm_cyclic_prefixer(4096, int(4096 + 4096 / 8), 0, '')
         self.blocks_stream_to_vector_0 = blocks.stream_to_vector(gr.sizeof_gr_complex * 1, 4096)
         self.blocks_file_source_0 = blocks.file_source(gr.sizeof_char * 1, 'challenges/rfhs.bin', False)
         self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)

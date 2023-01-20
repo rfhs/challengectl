@@ -21,7 +21,7 @@ from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio.filter import pfb
 import math
-import mixalot
+# import mixalot
 import osmosdr
 import time
 
