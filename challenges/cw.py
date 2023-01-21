@@ -90,8 +90,8 @@ class cw(gr.top_block):
         self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
             interpolation=2000000,
             decimation=samp_rate,
-            taps=None,
-            fractional_bw=None,
+            taps=[],
+            fractional_bw=0.0,
         )
         self.osmosdr_sink_0 = osmosdr.sink(args="numchan=" + str(1) + " " + str(dev))
         self.osmosdr_sink_0.set_sample_rate(2000000)

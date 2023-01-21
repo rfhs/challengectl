@@ -15,6 +15,7 @@ from gnuradio import filter
 from gnuradio import gr
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
+from gnuradio.fft import window
 # from optparse import OptionParser
 import configparser
 import osmosdr
@@ -101,14 +102,14 @@ class usb_tx(gr.top_block):
         self.rational_resampler_xxx_0_0 = filter.rational_resampler_ccc(
             interpolation=int(rf_samp_rate),
             decimation=int(if_samp_rate),
-            taps=None,
-            fractional_bw=None,
+            taps=[],
+            fractional_bw=0.0,
         )
         self.rational_resampler_xxx_0 = filter.rational_resampler_fff(
             interpolation=int(if_samp_rate),
             decimation=int(wav_samp_rate),
-            taps=None,
-            fractional_bw=None,
+            taps=[],
+            fractional_bw=0.0,
         )
         self.osmosdr_sink_0 = osmosdr.sink(args="numchan=" + str(1) + " " + str(dev))
         self.osmosdr_sink_0.set_sample_rate(rf_samp_rate)
@@ -126,7 +127,7 @@ class usb_tx(gr.top_block):
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((audio_gain, ))
         self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
         self.band_pass_filter_0 = filter.interp_fir_filter_ccc(1, firdes.complex_band_pass(
-            1, if_samp_rate, low, high, 100, firdes.WIN_HAMMING, 6.76))
+            1, if_samp_rate, low, high, 100, window.WIN_HAMMING, 6.76))
         self.analog_sig_source_x_0_0 = analog.sig_source_c(if_samp_rate, analog.GR_COS_WAVE, offset, 1, 0)
         self.analog_sig_source_x_0 = analog.sig_source_c(if_samp_rate, analog.GR_SIN_WAVE, 0, carrier_level, 0)
         self.analog_const_source_x_0 = analog.sig_source_f(0, analog.GR_CONST_WAVE, 0, 0, 0)
@@ -152,7 +153,7 @@ class usb_tx(gr.top_block):
     def set_low(self, low):
         self.low = low
         self.set_high(self.low + self.filter_width)
-        self.band_pass_filter_0.set_taps(firdes.complex_band_pass(1, self.if_samp_rate, self.low, self.high, 100, firdes.WIN_HAMMING, 6.76))
+        self.band_pass_filter_0.set_taps(firdes.complex_band_pass(1, self.if_samp_rate, self.low, self.high, 100, window.WIN_HAMMING, 6.76))
 
     def get_filter_width(self):
         return self.filter_width
@@ -254,7 +255,7 @@ class usb_tx(gr.top_block):
 
     def set_if_samp_rate(self, if_samp_rate):
         self.if_samp_rate = if_samp_rate
-        self.band_pass_filter_0.set_taps(firdes.complex_band_pass(1, self.if_samp_rate, self.low, self.high, 100, firdes.WIN_HAMMING, 6.76))
+        self.band_pass_filter_0.set_taps(firdes.complex_band_pass(1, self.if_samp_rate, self.low, self.high, 100, window.WIN_HAMMING, 6.76))
         self.analog_sig_source_x_0_0.set_sampling_freq(self.if_samp_rate)
         self.analog_sig_source_x_0.set_sampling_freq(self.if_samp_rate)
 
@@ -270,7 +271,7 @@ class usb_tx(gr.top_block):
 
     def set_high(self, high):
         self.high = high
-        self.band_pass_filter_0.set_taps(firdes.complex_band_pass(1, self.if_samp_rate, self.low, self.high, 100, firdes.WIN_HAMMING, 6.76))
+        self.band_pass_filter_0.set_taps(firdes.complex_band_pass(1, self.if_samp_rate, self.low, self.high, 100, window.WIN_HAMMING, 6.76))
 
     def get_freq(self):
         return self.freq

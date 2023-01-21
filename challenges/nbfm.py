@@ -68,8 +68,8 @@ class nbfm(gr.top_block):
         self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
             interpolation=samp_rate,
             decimation=int(240e3),
-            taps=None,
-            fractional_bw=None,
+            taps=[],
+            fractional_bw=0.0,
         )
         self.osmosdr_sink_0 = osmosdr.sink(args="numchan=" + str(1) + " " + str(dev))
         self.osmosdr_sink_0.set_sample_rate(samp_rate)

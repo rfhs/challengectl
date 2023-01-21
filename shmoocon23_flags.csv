@@ -13,4 +13,3 @@ shmoocon,1674230400,1674417600
 12,SDR_ASK_2,Chim chim-en-ey chim chim cher-ee,ask,,,60,90,ham_144,,
 13,SDR_ASK_3,Take back that mink and shorten the sleeves for somebody else.,ask,,,60,90,448950,,
 14,SDR_ASK_4,Richard Rogers Theatre at 226 West 46th Street,ask,,,60,90,ham_900,,
-17,LRS_RX,-s 135 -p 949 -pf 1,lrs,,,60,90,467750,,
