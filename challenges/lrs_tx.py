@@ -151,14 +151,14 @@ def main(top_block_cls=lrs_tx, options=None):
         options = argument_parser().parse_args()
     tb = top_block_cls(bbgain=options.bbgain, binfile=options.binfile, deviceargs=options.deviceargs, freq=options.freq, ifgain=options.ifgain, rfgain=options.rfgain)
 
-    def sig_handler(sig=None, frame=None):
-        tb.stop()
-        tb.wait()
+    # def sig_handler(sig=None, frame=None):
+    #     tb.stop()
+    #     tb.wait()
 
-        sys.exit(0)
+    #     sys.exit(0)
 
-    signal.signal(signal.SIGINT, sig_handler)
-    signal.signal(signal.SIGTERM, sig_handler)
+    # signal.signal(signal.SIGINT, sig_handler)
+    # signal.signal(signal.SIGTERM, sig_handler)
 
     tb.start()
 

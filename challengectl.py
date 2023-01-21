@@ -183,10 +183,17 @@ class transmitter:
         pocsagopts.message = flag
         # Call main in pocsagtx_osmocom, passing in pocsagopts options array
         pocsagtx_osmocom.main(options=pocsagopts)
+        # pocsag_tx.main(flag, int(modopt1), freq, device)
+        print("Finished TX POCSAG, sleeping for 3sec before returning device")
         sleep(3)
+        # print("Slept for 30 seconds")
         device_q.put(device_id)
+        # print("Returned Device top pool")
         sleep(randint(mintime, maxtime))
+        # sleep(10)
+        # print("Slept for 10 seconds")
         flag_q.put(flag_args[0])
+        # print("Returned flag to pool")
 
     def fire_lrs(self, device_id, flag_q, device_q, *flag_args):
         print("\nTransmitting LRS\n")
@@ -220,7 +227,7 @@ class transmitter:
 
         # Call main in pocsagtx_osmocom, passing in lrsopts options array
         lrs_tx.main(options=lrsopts)
-        sleep(5)
+        sleep(3)
         # Delete pager bin file from /tmp/
         os.remove(outfile)
         print("Removed outfile")

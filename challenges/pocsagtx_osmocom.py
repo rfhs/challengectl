@@ -19,9 +19,11 @@ import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
+from gnuradio import filter
 from gnuradio.filter import pfb
 import math
 # import mixalot
+import gnuradio.mixalot as mixalot
 import osmosdr
 import time
 
@@ -159,14 +161,14 @@ def main(top_block_cls=pocsagtx_osmocom, options=None):
         options = argument_parser().parse_args()
     tb = top_block_cls(capcode=options.capcode, deviceargs=options.deviceargs, message=options.message, pagerfreq=options.pagerfreq, samp_rate=options.samp_rate)
 
-    def sig_handler(sig=None, frame=None):
-        tb.stop()
-        tb.wait()
+    # def sig_handler(sig=None, frame=None):
+    #     tb.stop()
+    #     tb.wait()
 
-        sys.exit(0)
+    #     sys.exit(0)
 
-    signal.signal(signal.SIGINT, sig_handler)
-    signal.signal(signal.SIGTERM, sig_handler)
+    # signal.signal(signal.SIGINT, sig_handler)
+    # signal.signal(signal.SIGTERM, sig_handler)
 
     tb.start()
 
