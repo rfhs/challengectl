@@ -177,7 +177,7 @@ class transmitter:
         # Configure options specific to pocsagtx_osmocom script
         pocsagopts = pocsagtx_osmocom.argument_parser().parse_args('')
         pocsagopts.deviceargs = device
-        pocsagopts.samp_rate = 1000000.0
+        pocsagopts.samp_rate = 2400000
         pocsagopts.pagerfreq = freq
         pocsagopts.capcode = int(modopt1)
         pocsagopts.message = flag
@@ -223,9 +223,14 @@ class transmitter:
         sleep(5)
         # Delete pager bin file from /tmp/
         os.remove(outfile)
+        print("Removed outfile")
         device_q.put(device_id)
+        print("Released Radio to pool")
         sleep(randint(mintime, maxtime))
+        # sleep(10)
+        print("Slept, returning flag to pool")
         flag_q.put(flag_args[0])
+        print("Returned flag to pool")
 
 
 def select_freq(band):

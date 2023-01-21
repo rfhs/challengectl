@@ -28,7 +28,7 @@ import time
 
 class pocsagtx_osmocom(gr.top_block):
 
-    def __init__(self, capcode=1234567, deviceargs="hackrf=0", message="DEF CON 30 HOM3C0MING", pagerfreq=433500000, samp_rate=1000000):
+    def __init__(self, capcode=1234567, deviceargs="hackrf=0", message="DEF CON 30 HOM3C0MING", pagerfreq=433500000, samp_rate=2400000):
         gr.top_block.__init__(self, "Pocsagtx Osmocom")
 
         ##################################################
