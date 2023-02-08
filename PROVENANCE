@@ -1,0 +1,8 @@
+Original code written by Russ Handorf for the Wireless CTF
+using examples and inspiration from Argilo found here https://github.com/argilo/sdr-examples
+Extended and maintained by Corey Koval and Dan Perret
+
+Some gnuradio OOT's may be bundled here and retain their original licenses and authors
+challenges/lrs_* https://github.com/tony-tiger/lrs
+challenges/pocsagtx_osmocom.py https://github.com/unsynchronized/gr-mixalot
+Any blocks which may have been borrowed or used to generate python maintains it's original license and authors
