@@ -1,3 +1,0 @@
-testlrs_pocsag,1580497200,1580662800
-0,LRS_RX,-s 135 -p 949 -pf 1,lrs,,,60,90,467750,,
-1,POCSAG_RX,This RF HOM3C0MING is in El Dorado,pocsag,301946,,60,90,444500,,

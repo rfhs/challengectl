@@ -1,6 +1,0 @@
-testall,1580497200,1580662800
-0,HAM_DIGITAL_1,challenges/shmoo2020/PSK31.wav,usb,48000,,5,10,145550,,
-1,HAM_DIGITAL_2,challenges/shmoo2020/MFSK16.wav,nbfm,48000,,5,10,146075,,
-2,SDR_5_MORSE_1,marble cake also the game,cw,70,,5,10,146450,,
-3,SDR_11_ASK_1,What hath God wrought?,ask,,,5,10,146875,,
-4,LRS_RX,-s 135 -p 949 -pf 1,lrs,,,60,90,467750,,

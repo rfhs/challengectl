@@ -8,5 +8,7 @@ challenges/automate_ft8/captures/*
 *.bak
 devices.txt
 test_*
-
 .git/
+devices.txt.corey
+devices.txt.test
+flags.txt
