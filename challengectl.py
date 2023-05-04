@@ -1,18 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-#main file
-
 import os
 import sys
-# import datetime
 import signal
 import csv
 from time import sleep
 from random import randint, choice, shuffle
 import random
 import sqlite3
-# from bottle import route, run, template, get, post, static_file
 from multiprocessing import Process, Queue
 import numpy as np
 import subprocess
@@ -79,25 +75,6 @@ class transmitter:
         sleep(randint(mintime, maxtime))
         flag_q.put(flag_args[0])
 
-    # def fire_neutron(self, device_id, flag_q, device_q, *flag_args):
-    #     print("\nTransmitting Neutron\n")
-    #     flag_args = flag_args[0]
-    #     device = fetch_device(device_id)
-    #     flag = flag_args[1]
-    #     speed = int(flag_args[2])
-    #     freq = int(flag_args[6]) * 1000
-    #     mintime = flag_args[4]
-    #     maxtime = flag_args[5]
-    #     # print("I ran fire_neutron with flag=" + str(flag) + " and freq=" +
-    #     # str(freq) + " and speed=" + str(speed))
-    #     p = Process(target=neutron.main, args=(flag.encode("utf-8").hex(), speed, freq, device))
-    #     p.start()
-    #     p.join()
-    #     sleep(3)
-    #     device_q.put(device_id)
-    #     sleep(randint(mintime, maxtime))
-    #     flag_q.put(flag_args[0])
-
     def fire_usb(self, device_id, flag_q, device_q, *flag_args):
         print("\nTransmitting USB\n")
         flag_args = flag_args[0]
@@ -131,38 +108,6 @@ class transmitter:
         device_q.put(device_id)
         sleep(randint(mintime, maxtime))
         flag_q.put(flag_args[0])
-
-# def fire_dvbt():
-#     dvbt_Q = Queue()
-#     global conference
-#     conn = sqlite3.connect(conference + ".db")
-#     c = conn.cursor()
-#     c.execute('''SELECT chal_id FROM flags WHERE module="dvbt"''')
-#     flag_list = c.fetchall()
-#     for row in flag_list:
-#         dvbt_Q.put(row[0])
-#
-#     while True:
-#         chal_id = dvbt_Q.get()
-#         c.execute('''SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,
-#         freq1 FROM flags WHERE chal_id=?''', (chal_id,))
-#         current_chal = c.fetchone()
-#         current_chal = list(current_chal)
-#         try:
-#             freq = int(current_chal[7]) * 1000
-#         except ValueError:
-#             if current_chal[7] == dvbt_rand:
-#                 freq = select_dvbt("dvbt_" + str(randint(34, 69))) * 1000
-#             else:
-#                 freq = select_dvbt(current_chal[7])
-#         flag1 = str(current_chal[2])
-#         flag2 = str(current_chal[3])
-#         dev = "0"
-#         #send-movie.sh flag1 flag2 dev freq
-#         send_movie = "sh ./challenges/send-movie.sh " + flag1 + flag2 + dev + str(freq)
-#         os.system(send_movie)
-#         sleep(60)
-#         dvbt_Q.put(current_chal[1])
 
     def fire_pocsag(self, device_id, flag_q, device_q, *flag_args):
         print("\nTransmitting POCSAG\n")
@@ -284,23 +229,6 @@ def fetch_device(dev_id):
     conn.close()
     return device[0]
 
-
-# @get('/')
-# def index_html():
-#     global conference
-#     return template('index.tpl', {'conference': conference})
-#
-#
-# @get('/flag_manager')
-# def flag_mgr():
-#     return template('flag_manager.tpl')
-#
-#
-# @route('/static/<filepath:path>', name='static')
-# def server_static(filepath):
-#     return static_file(filepath, root='./static')
-
-
 def main(flagfile, devicefile):
     global conference
     device_Q = Queue()
@@ -328,8 +256,6 @@ def main(flagfile, devicefile):
     dev_available = device_Q.get()
     t = transmitter()
 
-    # dvbtp = Process(target=fire_dvbt)
-    # dvbtp.start()
     try:
         while dev_available != None:
             chal_id = flag_Q.get()
@@ -367,15 +293,6 @@ def main(flagfile, devicefile):
             pass
         finally:
             exit()
-        #dvbtp.join()
-
-
-# def sigterm_handler(signal, frame):
-#     print('Killed')
-#     os.kill(os.getpid(), signal.SIGTERM)
-#
-#
-# signal.signal(signal.SIGTERM, sigterm_handler)
 
 if __name__ == '__main__':
     # run(host='localhost', port=8080)
