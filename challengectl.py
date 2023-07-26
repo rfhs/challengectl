@@ -3,7 +3,6 @@
 
 import os
 import sys
-import signal
 import csv
 from time import sleep
 from random import randint, choice, shuffle
@@ -11,7 +10,6 @@ import random
 import sqlite3
 from multiprocessing import Process, Queue
 import numpy as np
-import subprocess
 import string
 
 from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
