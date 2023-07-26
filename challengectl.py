@@ -14,26 +14,32 @@ import string
 
 from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
 
-
 def build_database(flagfile, devicefile):
     flag_input = read_flags(flagfile)
+    # Skip first line of flag_input where conference information is stored
+    # Add remaining lines to flag_line array
     flag_line = np.asarray(flag_input[1:])
 
     devices = read_devices(devicefile)
 
+    # Read name of conference from first line of flag file
     conference = flag_input[0][0]
+    # Create sqlite database for conference and connect to the database
     conn = sqlite3.connect(conference + ".db")
     c = conn.cursor()
+    # Create database schema
     c.execute('''CREATE TABLE flags(chal_id integer primary key,chal_name,flag,module,modopt1,modopt2,
     minwait integer,maxwait integer,freq1,freq2,freq3)''')
     c.execute("CREATE TABLE flag_status(chal_id integer primary key,enabled,lastrun integer,ready)")
     c.execute("CREATE TABLE devices(dev_id integer primary key,dev_string,dev_busy)")
+    # Insert flags from flag_line array into database
     c.executemany("INSERT INTO flags VALUES (?,?,?,?,?,?,?,?,?,?,?)", flag_line)
+    # Add flag status row for each flag, setting each flag to enabled, lastrun blank, ready
     c.executemany("INSERT INTO flag_status VALUES (?,1,'',1)", flag_line[:, :1])
+    # Insert devices from devices array into database, set each device to not busy
     c.executemany("INSERT INTO devices VALUES (?,?,0)", devices)
     conn.commit()
     conn.close()
-
 
 class transmitter:
     # flag_args:chal_id,flag,modopt1,modopt2,minwait,maxwait,freq1
@@ -184,13 +190,13 @@ class transmitter:
 
 
 def select_freq(band):
+    """Read from frequencies text file, return row that starts with band argument."""
     with open("frequencies.txt") as f:
         reader = csv.reader(f)
         for row in reader:
             if row[0] == band:
                 freq = randint(int(row[1]), int(row[2]))
                 return((freq, row[1], row[2]))
-
 
 def select_dvbt(channel):
     with open("dvbt_channels.txt") as f:
@@ -199,8 +205,11 @@ def select_dvbt(channel):
             if row[0] == channel:
                 return(int(row[1]))
 
-
 def read_flags(flags_file):
+    """Read lines from flags_file and return a list of lists for each row in the flags_file. 
+    The first item in the list contains conference information, and the remaining items in the
+    list contain information about each flag."""
+
     flag_input = []
     with open(flags_file) as f:
         reader = csv.reader(f)
@@ -208,8 +217,8 @@ def read_flags(flags_file):
             flag_input.append(row)
     return flag_input
 
-
 def read_devices(devices_file):
+    """Read lines from devices file, and return a list of lists for each row in the devices file."""
     devices_input = []
     with open(devices_file) as f:
         reader = csv.reader(f, quotechar='"')
@@ -217,8 +226,8 @@ def read_devices(devices_file):
             devices_input.append(row)
     return devices_input
 
-
 def fetch_device(dev_id):
+    """Query database for device string for a given device id and return the device string."""
     global conference
     conn = sqlite3.connect(conference + ".db")
     c = conn.cursor()
