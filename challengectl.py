@@ -192,7 +192,9 @@ class transmitter:
 
 
 def select_freq(band):
-    """Read from frequencies text file, return row that starts with band argument."""
+    """Read from frequencies text file, select row that starts with band argument.
+    Returns tuple with randomly selected frequency, the minimum frequency for that band, and
+    the maximum frequency for that band."""
     with open("frequencies.txt") as f:
         reader = csv.reader(f)
         for row in reader:
@@ -267,6 +269,7 @@ def main(flagfile, devicefile):
     # Randomize order of flag_list
     shuffle(flag_list)
     print(flag_list)
+    # Put flag_list into thread safe flag_Q
     for row in flag_list:
         flag_Q.put(row)
 
@@ -280,21 +283,35 @@ def main(flagfile, devicefile):
             freq1,chal_name FROM flags WHERE chal_id=? AND module!="dvbt"''', (chal_id,))
             current_chal = c.fetchone()
             current_chal = list(current_chal)
+
+            # Parse database fields into named variables to avoid using list index in multiple places
+            cc_module = current_chal[0]
+            cc_id = current_chal[1]
+            cc_flag = current_chal[2]
+            cc_modopt1 = current_chal[3]
+            cc_modopt2 = current_chal[4]
+            cc_minwait = current_chal[5]
+            cc_maxwait = current_chal[6]
+            cc_freq1 = current_chal[7]
+            cc_name = current_chal[8]
+
             try:
-                current_chal[7] = int(current_chal[7])
-                freq_or_range = str(current_chal[7])
+                txfreq = int(cc_freq1)
+                freq_or_range = str(txfreq)
             except ValueError:
-                freq_range = select_freq(current_chal[7])
-                current_chal[7] = freq_range[0]
+                freq_range = select_freq(cc_freq1)
+                txfreq = freq_range[0]
                 freq_or_range = str(freq_range[1]) + "-" + str(freq_range[2])
 
-            print(f"\nPainting Waterfall on {current_chal[7]}\n")
+            print(f"\nPainting Waterfall on {txfreq}\n")
             # spectrum_paint.main(current_chal[7] * 1000, fetch_device(dev_available))
-            p = Process(target=spectrum_paint.main, args=(current_chal[7] * 1000, fetch_device(dev_available)))  # , daemon=True)
+            p = Process(target=spectrum_paint.main, args=(txfreq * 1000, fetch_device(dev_available)))  # , daemon=True)
             p.start()
             p.join()
-            print(f"\nStarting {current_chal[8]} on {current_chal[7]}")
-            p = Process(target=getattr(t, "fire_" + current_chal[0]), args=(dev_available, flag_Q, device_Q, current_chal[1:]))
+            print(f"\nStarting {cc_name} on {txfreq}")
+            # Create list of challenge module arguments, using txfreq to allow setting random freq here instead of in the challenge module
+            challengeargs = [cc_id, cc_flag, cc_modopt1, cc_modopt2, cc_minwait, cc_maxwait, txfreq]
+            p = Process(target=getattr(t, "fire_" + cc_module), args=(dev_available, flag_Q, device_Q, challengeargs))
             p.start()
             # #we need a way to know if p.start errored or not
             # os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
