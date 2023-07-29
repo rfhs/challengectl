@@ -14,5 +14,5 @@ shmoocon,1674230400,1674417600
 13,SDR_ASK_3,Corner of Camden Street and Eutaw Street,ask,,,60,90,448950,,
 14,SDR_ASK_4,Morse Henry and Vail created a telegraph system,ask,,,60,90,ham_900,,
 16,POCSAG_RX,All aboard the Baltimore and Ohio Railroad,pocsag,183052,,60,90,444500,,
-17,LRS_RX,-s 250 -p 177 -pf 1,,,60,90,467750,,
+17,LRS_RX,-s 250 -p 177 -pf 1,lrs,,,60,90,467750,,
 18,POCSAG_TX,Transmit your team name via 512bps POCSAG to 433.5MHz capcode 1234567 for more points.,pocsag,301946,,120,180,444500,,
