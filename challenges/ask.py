@@ -41,7 +41,6 @@ class russ_test(gr.top_block):
         # Blocks
         ##################################################
         self.osmosdr_sink_0 = osmosdr.sink(args="numchan=" + str(1) + " " + str(dev))
-        self.osmosdr_sink_0.set_time_source("mimo", 0)
         self.osmosdr_sink_0.set_sample_rate(samp_rate)
         self.osmosdr_sink_0.set_center_freq(center_freq, 0)
         self.osmosdr_sink_0.set_freq_corr(0, 0)
