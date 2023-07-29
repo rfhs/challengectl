@@ -15,6 +15,8 @@ import string
 from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
 
 def build_database(flagfile, devicefile):
+    """Create sqlite database based on flags file and devices file. Database file name will be based on
+    conference name extracted from first line of flags file."""
     flag_input = read_flags(flagfile)
     # Skip first line of flag_input where conference information is stored
     # Add remaining lines to flag_line array
@@ -238,23 +240,31 @@ def fetch_device(dev_id):
 
 def main(flagfile, devicefile):
     global conference
+    # Create thread safe FIFO queues for devices and flags
     device_Q = Queue()
     flag_Q = Queue()
+    # Read flags file
     flag_input = read_flags(flagfile)
+    # Extract conference name from first item returned by read_flags
     conference = flag_input[0][0]
+    # Check to see if database for conference name exists, create it if not
     if not os.path.exists(conference + ".db"):
         build_database(flagfile, devicefile)
+    # Connect to conference database
     conn = sqlite3.connect(conference + ".db")
     c = conn.cursor()
 
+    # Create a list of device IDs from devices in the database
     c.execute("SELECT dev_id FROM devices")
     dev_list = c.fetchall()
     for row in dev_list:
         device_Q.put(row[0])
 
+    # Create a list of challenge IDs based on flags that are enabled in the database
     c.execute("SELECT chal_id FROM flag_status WHERE enabled=1")
     flag_list = c.fetchall()
     flag_list = list(sum(flag_list, ()))
+    # Randomize order of flag_list
     shuffle(flag_list)
     print(flag_list)
     for row in flag_list:
