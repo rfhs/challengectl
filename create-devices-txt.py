@@ -97,7 +97,7 @@ def main(options=None):
                     hackrfserial = re.sub("^serial=0+(?!$)", "", item)
     
             # Skip device if serial is empty
-            if(bladerfserial != ""):
+            if(hackrfserial != ""):
                 # Generate hackRF device string
                 # Example: "hackrf=<serialnumber>"
                 hackrfstring = "hackrf={}".format(hackrfserial)
