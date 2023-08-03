@@ -11,6 +11,7 @@ import sqlite3
 from multiprocessing import Process, Queue
 import numpy as np
 import string
+import argparse
 
 from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
 
@@ -240,7 +241,21 @@ def fetch_device(dev_id):
     conn.close()
     return device[0]
 
-def main(flagfile, devicefile):
+def argument_parser():
+    parser = argparse.ArgumentParser(description="A script to run SDR challenges on multiple SDR devices.")
+    parser.add_argument('flagfile', help="Flags file")
+    parser.add_argument('devicefile', help="Devices file")
+    parser.add_argument("-v", "--verbose", action="store_true")
+    return parser
+
+def main(options=None):
+    if options is None:
+        options = argument_parser().parse_args()
+
+    args = options
+    flagfile = args.flagfile
+    devicefile = args.devicefile
+    verbose = args.verbose
     global conference
     # Create thread safe FIFO queues for devices and flags
     device_Q = Queue()
@@ -329,9 +344,4 @@ def main(flagfile, devicefile):
             exit()
 
 if __name__ == '__main__':
-    # run(host='localhost', port=8080)
-    try:
-        main(sys.argv[1], sys.argv[2])
-    except IndexError:
-        print("Usage:")
-        print("challengectl.py [flags file] [device file]")
+    main()
