@@ -29,6 +29,9 @@ def main(options=None):
     
     # Find devices through osmosdr
     devices = osmosdr.device.find()
+
+    # Variable to track index of hackrf devices
+    hackrfindex = 0;
     
     for device in devices:
         # Get strings for each device identified by osmosdr
@@ -95,12 +98,16 @@ def main(options=None):
                 if(item.startswith("serial=")):
                     # Remove 'serial=' and leading zeros from HackRF serial number
                     hackrfserial = re.sub("^serial=0+(?!$)", "", item)
+                elif(item.startswith("label=")):
+                    label = item
     
             # Skip device if serial is empty
             if(hackrfserial != ""):
                 # Generate hackRF device string
                 # Example: "hackrf=<serialnumber>"
-                hackrfstring = "hackrf={}".format(hackrfserial)
+                hackrfstring = "hackrf={},{}".format(hackrfindex,label)
+                # Increment hackrf index
+                hackrfindex += 1
                 if(verbose):
                     print(hackrfstring)
                 sdrstrings.append(hackrfstring)
