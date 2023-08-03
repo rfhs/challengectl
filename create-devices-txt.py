@@ -104,7 +104,7 @@ def main(options=None):
             # Skip device if serial is empty
             if(hackrfserial != ""):
                 # Generate hackRF device string
-                # Example: "hackrf=<serialnumber>"
+                # Example: "hackrf=<index>,label='HackRF One #X <serial>'"
                 hackrfstring = "hackrf={},{}".format(hackrfindex,label)
                 # Increment hackrf index
                 hackrfindex += 1
