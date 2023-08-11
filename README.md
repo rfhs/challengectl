@@ -1,5 +1,39 @@
 # challengectl
-Queues challenges and gr-osmosdr radios to transmit for the WCTF
+Queues challenges and gr-osmosdr radios to transmit for the RFCTF
 
-`./challengectl.py [flags file] [devices file]`
+```
+$ python challengectl.py -h
+usage: challengectl.py [-h] [-v] flagfile devicefile
 
+A script to run SDR challenges on multiple SDR devices.
+
+positional arguments:
+  flagfile       Flags file
+  devicefile     Devices file
+
+options:
+  -h, --help     show this help message and exit
+  -v, --verbose
+```
+
+## Flags File
+The flags file is a csv file, with the first line containing the conference name, and start and end times. After the first line, add one line per challenge, using the format shown below.
+```
+conference,starttime,endtime
+chal_id,chal_name,flag,module,modopt1,modopt2,minwait,maxwait,freq1,freq2,freq3
+```
+The flags-archive directory contains example flags files from previous RFCTF events.
+
+## Devices File
+The devices file is a csv file, with one line per SDR device. Each line begins with a 0 based index, and the device string for each device to be used by challengectl.
+```
+dev_id,osmosdr_device_string
+0,"bladerf=longhexserialnumberhere,biastee=1"
+```
+`create-devices-txt.py` will attempt to detect supported devices on your system, and automatically output a devices.txt file with a line for each of those devices.
+
+### Supported Devices
+Any transmit capable device that can be used to transmit using a GNURadio gr-osmosdr sink *should* work, however only the following devices have been tested so far.
+- [Nuand bladeRF 2.0](https://www.nuand.com/bladerf-2-0-micro/)
+- [Ettus USRP B200](https://www.ettus.com/all-products/ub200-kit/)
+- [Great Scott Gadgets HackRF One](https://greatscottgadgets.com/hackrf/one/)
