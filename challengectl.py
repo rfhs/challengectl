@@ -3,7 +3,7 @@
 
 import os
 import sys
-import csv
+import csv, yaml
 from time import sleep
 from random import randint, choice, shuffle
 import random
@@ -84,6 +84,24 @@ class transmitter:
 
     def fire_usb(self, device_id, flag_q, device_q, *flag_args):
         print("\nTransmitting USB\n")
+        flag_args = flag_args[0]
+        device = fetch_device(device_id)
+        wav_src = str(flag_args[1])
+        wav_rate = int(flag_args[2])
+        freq = int(flag_args[6]) * 1000
+        mintime = flag_args[4]
+        maxtime = flag_args[5]
+        # print("I ran fire_usb with flag=" + str(wav_src) + " and freq=" +
+        # str(freq) + " and wav_rate=" + str(wav_rate))
+        usb_tx.main(wav_src, wav_rate, freq, device)
+        sleep(3)
+        device_q.put(device_id)
+        sleep(randint(mintime, maxtime))
+        flag_q.put(flag_args[0])
+
+    def fire_ssb(self,device_id, flag_q, device_q, *flag_args):
+        mode = 'tbd'
+        print(f"\nTransmitting SSB ({mode})\n")
         flag_args = flag_args[0]
         device = fetch_device(device_id)
         wav_src = str(flag_args[1])
@@ -247,6 +265,9 @@ def argument_parser():
     parser.add_argument('devicefile', help="Devices file")
     parser.add_argument("-v", "--verbose", action="store_true")
     return parser
+
+def parse_yaml(configfile):
+    pass
 
 def main(options=None):
     if options is None:
