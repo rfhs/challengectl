@@ -1,3 +1,35 @@
+# challengectl v2
+
+Everthing is gonna be broken in this branch for a few weeks while I work on stuff. Don't even try to use it til this message is gone.
+
+## TODO:
+- [ ] Convert Config Files to YAML
+  - [x] Create YAML Structure
+  - [ ] UpdateCode to Parse YAML
+- [ ] Update USB Flowgraph to SSB (Both LSB and USB Capable)
+  - [x] Finish GRC Flowgraph
+  - [ ] Integrate into code
+- [ ] Include Source Flowgraphs when possible
+  - [ ] NBFM
+  - [x] SSB
+  - [x] FreeDV
+  - [ ] POCSAG
+  - [ ] Paint
+  - [ ] CW - Potentially possible, TBD
+  - [ ] ASK - Likely not possible
+  - [x] Freq Hopper
+  - [ ] LRS (Dan?)
+- [ ] Change code to use unmodified GNU Radio Generated Python
+- [ ] Add FreeDV Challenge
+  - [x] Finish GRC Flowgraph
+  - [ ] Integrate into code
+- [ ] Add Freq-hop challenge
+  - [x] Finish GRC Flowgraph
+  - [ ] Integrate into code
+- [ ] Update documention for new YAML format and new challenges
+- [ ] Integrate Device Enumeration
+- [ ] Implemet WebUI
+
 # challengectl
 Queues challenges and gr-osmosdr radios to transmit for the RFCTF
 
