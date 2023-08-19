@@ -1,6 +1,5 @@
 *.pyc
 challenges/*.pyc
-challenges/*.grc
 challenges/automate_ft8/*.wav
 challenges/automate_ft8/*.pyc
 challenges/automate_ft8/captures/*
