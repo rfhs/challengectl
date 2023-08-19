@@ -1,0 +1,152 @@
+---
+# This is just a draft and nothing here is set in stone yet
+conference:
+  # The name of the conference
+  name: ExampleCon
+  # CTF start and stop times. Maybe add daily start and stop times?
+  # Year-Month-Day HH:mm:ss timezone"
+  start: "2063-04-05 09:00:00 -5"
+  stop: "2063-04-07 12:00:00 -5"
+
+# Settngs can be set per model, or per specific device.
+# Device specific settings are checked first, if none set, model settings are used.
+# If no device or model settings are set, flowgraph defaults are used.
+radios:
+  # Whether or not to detect devices plugged into the machine. All TX capable devices detected will be used.
+  autodetect: True
+  # Device Model defaults go here
+  models:
+  - model: bladerf
+    rf_gain: 43
+    # if_gain would do nothing for the bladerf
+    bias_t: True
+    rf_samplerate: 2000000
+    ppm: 0
+  - model: hackrf
+    rf_gain: 14
+    if_gain: 32
+    bias_t: True
+    rf_samplerate: 2000000
+    ppm: 0
+
+  # Define individual device settings here  
+  # Device Strings are generated from information set here
+  # name could be a device index or serial number. Basically the identifier used by gr-osmosdr
+  devices:
+  # hackrf=0
+  - name: 0
+    model: hackrf
+    rf_gain: 0
+    if_gain: 32
+    bias_t: True
+    ppm: -7
+
+  # bladerf=123456789abcdef0123456
+  - name: 123456789abcdef0123456
+    model: bladerf
+    rf_gain: 43
+    # if_gain would do nothing for the bladerf
+    bias_t: True
+
+# Define the flags to be transmitted for each conference
+flags:
+# Single Sideband Example
+  - name: SSB_FLAG_1
+    # Frequency is now in Hertz, or can be a named range
+    frequency: 146550000
+    # Modulation can be ssb, nbfm, freedv, etc
+    modulation: ssb
+    # For SSB, mode can be lsb or usb. Flowgraph defaults to usb
+    mode: lsb
+    flag: challenges/examples/example.wav
+    wav_samplerate: 48000
+    min_delay: 60
+    max_delay: 90
+# NBFM Example
+  - name: NBFM_FLAG_1
+    # Frequency is now in Hertz, or can be a named range
+    frequency: 146550000
+    # Modulation can be ssb, nbfm, freedv, etc
+    modulation: nbfm
+    flag: challenges/examples/example.wav
+    wav_samplerate: 48000
+    min_delay: 60
+    max_delay: 90
+# FreeDV Example
+  - name: FREEDV_FLAG_1
+    # Frequency is now in Hertz, or can be a named range
+    frequency: 146550000
+    # Modulation can be ssb, nbfm, freedv, etc
+    modulation: ssb
+    # FreeDV uses SSB, mode can be lsb or usb. Flowgraph defaults to usb
+    mode: usb
+    # FreeDV is a voice codec. I don't recommend sending digital modes through this, it will get mangled.
+    flag: challenges/examples/example.wav
+    # FreeDV Can transmit audio and text at the same time
+    text: 'Text message flag'
+    wav_samplerate: 48000
+    min_delay: 60
+    max_delay: 90
+# CW Example
+  - name: MORSE_FLAG_1
+    # Frequency is now in Hertz, or can be a named range
+    frequency: 146550000
+    # Modulation can be ssb, nbfm, freedv, etc
+    modulation: cw
+    flag: 'this text gets sent in morse code'
+    # for speed, smaller numbers are faster.
+    speed: 35
+    min_delay: 60
+    max_delay: 90
+# ASK Example
+  - name: ASK_FLAG_1
+    # Frequency is now in Hertz, or can be a named range
+    frequency: 146550000
+    # Modulation can be ssb, nbfm, freedv, etc
+    modulation: ask
+    flag: 'this text gets sent as amplitude shift keying'
+    min_delay: 60
+    max_delay: 90
+# POCSAG Example
+  - name: POCSAG_FLAG_1
+    # Frequency is now in Hertz, or can be a named range
+    frequency: 146550000
+    # Modulation can be ssb, nbfm, freedv, etc
+    modulation: pocsag
+    flag: 'POCSAG Message for all to hear'
+    capcode: 123456
+    min_delay: 60
+    max_delay: 90
+# Freq Hopper Example
+  - name: FREQHOP_1
+    # Frequency is now in Hertz, or can be a named range
+    frequency: 146550000
+    flag: challenges/examples/example.wav
+    channel_spacing: 10000 # Hz
+    hop_rate: 10 # hops per second
+    # Seconds of non-repeating hop data
+    hop_time: 60
+    # RNG Seed
+    seed: RFHS
+    wav_samplerate: 48000
+    min_delay: 60
+    max_delay: 90
+#LRS Example
+  - name: LRS_FLAG_1
+    # Frequency is now in Hertz, or can be a named range
+    frequency: 146550000
+    # Modulation can be ssb, nbfm, freedv, etc
+    modulation: lrs
+    # The flag looks like command line options or something idk
+    flag: '-s 10 -p 976 -pf 1'
+    min_delay: 60
+    max_delay: 90
+
+# On the fence about moving named frequency ranges here, or just sticking to the CSV file
+frequency-ranges:
+  - name:
+    start:
+    stop:
+  - name:
+    start:
+    stop:
