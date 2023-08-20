@@ -11,3 +11,4 @@ test_*
 devices.txt.corey
 devices.txt.test
 flags.txt
+settings.json
