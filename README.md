@@ -39,6 +39,8 @@ Everthing is gonna be broken in this branch for a few weeks while I work on stuf
   - [ ] Integrate into code
 - [ ] Update documentation for new YAML format and new challenges
 - [ ] Integrate Device Enumeration
+- [ ] Add support for multiple TX frontends per device
+- [ ] Add frequency limits and device args per TX frontend for different amp/filter/antenna setups
 - [ ] Implement WebUI
 
 # challengectl
