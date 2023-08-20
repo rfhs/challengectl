@@ -6,7 +6,7 @@ Everthing is gonna be broken in this branch for a few weeks while I work on stuf
 - [ ] Convert Config Files to YAML
   - [x] Create YAML Structure
   - [ ] UpdateCode to Parse YAML
-- [ ] Implemt a test mode
+- [ ] Implement a test mode
 - [ ] Update USB Flowgraph to SSB (Both LSB and USB Capable)
   - [x] Finish GRC Flowgraph
   - [ ] Integrate into code
