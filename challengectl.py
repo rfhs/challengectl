@@ -16,8 +16,9 @@ import argparse
 from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
 
 def build_database(flagfile, devicefile):
-    """Create sqlite database based on flags file and devices file. Database file name will be based on
-    conference name extracted from first line of flags file."""
+    """Create sqlite database based on flags file and devices file.
+       Database file name will be based on
+       conference name extracted from first line of flags file."""
     flag_input = read_flags(flagfile)
     # Skip first line of flag_input where conference information is stored
     # Add remaining lines to flag_line array
@@ -44,7 +45,21 @@ def build_database(flagfile, devicefile):
     conn.commit()
     conn.close()
 
+class Radio:
+    """TODO: Doc string here"""
+    def __init__(self) -> None:
+        pass
+
+    def check_freqrange(self, frequency) -> bool:
+        pass
+
+    def set_device_string(self, model, name, bias_t) -> str:
+        pass
+
+
+# TODO: Maybe rename this to Flowgraph?
 class transmitter:
+    '''TODO: Doc string here'''
     # flag_args:chal_id,flag,modopt1,modopt2,minwait,maxwait,freq1
 
     def fire_ask(self, device_id, flag_q, device_q, *flag_args):
@@ -181,7 +196,7 @@ class transmitter:
         # Generate pager.bin file
         # Generate random filename in /tmp/ for pager bin file
         randomstring = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-        outfile = "/tmp/lrs_{}.bin".format(randomstring)
+        outfile = f"/tmp/lrs_{randomstring}.bin"
         lrspageropts.outputfile = outfile
         lrs_pager.main(options=lrspageropts)
 
@@ -214,7 +229,7 @@ def select_freq(band):
     """Read from frequencies text file, select row that starts with band argument.
     Returns tuple with randomly selected frequency, the minimum frequency for that band, and
     the maximum frequency for that band."""
-    with open("frequencies.txt") as f:
+    with open("frequencies.txt", encoding="utf-8") as f:
         reader = csv.reader(f)
         for row in reader:
             if row[0] == band:
@@ -222,6 +237,7 @@ def select_freq(band):
                 return((freq, row[1], row[2]))
 
 def select_dvbt(channel):
+    """TODO: Deprecate me"""
     with open("dvbt_channels.txt") as f:
         reader = csv.reader(f)
         for row in reader:
@@ -313,7 +329,7 @@ def main(options=None):
     t = transmitter()
 
     try:
-        while dev_available != None:
+        while dev_available is not None:
             chal_id = flag_Q.get()
             c.execute('''SELECT module,chal_id,flag,modopt1,modopt2,minwait,maxwait,
             freq1,chal_name FROM flags WHERE chal_id=? AND module!="dvbt"''', (chal_id,))
