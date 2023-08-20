@@ -1,4 +1,5 @@
 ---
+mode: controller # controller or runner
 # This is just a draft and nothing here is set in stone yet
 conference:
   # The name of the conference
@@ -40,6 +41,11 @@ radios:
     if_gain: 32
     bias_t: True
     ppm: -7
+    # use named ranges or custom range for device frequency limits
+    frequency_limits:
+      - ham_144
+      - ham_440
+      - 800000000-850000000
 
   # bladerf=123456789abcdef0123456
   - name: 123456789abcdef0123456
@@ -47,6 +53,11 @@ radios:
     rf_gain: 43
     # if_gain would do nothing for the bladerf
     bias_t: True
+    # use named ranges or custom range for device frequency limits
+    frequency_limits:
+      - ham_144
+      - ham_440
+      - 800000000-850000000
 
 # Define the flags to be transmitted for each conference
 flags:

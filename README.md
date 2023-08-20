@@ -22,13 +22,13 @@ Everthing is gonna be broken in this branch for a few weeks while I work on stuf
   - [ ] LRS (Dan?)
 - [ ] Update Flowgraphs to use parameters (instead of variables) for flags, device args, gain settings
   - [ ] NBFM
-  - [ ] SSB
-  - [ ] FreeDV
+  - [x] SSB
+  - [x] FreeDV
   - [ ] POCSAG
   - [ ] Paint
   - [ ] CW
   - [ ] ASK
-  - [ ] Freq Hopper
+  - [x] Freq Hopper
   - [ ] LRS
 - [ ] Change code to use unmodified GNU Radio Generated Python
 - [ ] Add FreeDV Challenge
@@ -42,6 +42,9 @@ Everthing is gonna be broken in this branch for a few weeks while I work on stuf
 - [ ] Add support for multiple TX frontends per device
 - [ ] Add frequency limits and device args per TX frontend for different amp/filter/antenna setups
 - [ ] Implement WebUI
+- [ ] Create a multihost mode with a runner that can query a controller
+  - [ ] Create "API" to communicate between runner and controller
+  - [ ] Sync flags and wav files from controller to runner
 
 # challengectl
 Queues challenges and gr-osmosdr radios to transmit for the RFCTF
