@@ -5,7 +5,7 @@ Everthing is gonna be broken in this branch for a few weeks while I work on stuf
 ## TODO:
 - [ ] Convert Config Files to YAML
   - [x] Create YAML Structure
-  - [ ] UpdateCode to Parse YAML
+  - [ ] Update Code to Parse YAML
 - [ ] Implement a test mode
 - [ ] Update USB Flowgraph to SSB (Both LSB and USB Capable)
   - [x] Finish GRC Flowgraph
@@ -20,6 +20,16 @@ Everthing is gonna be broken in this branch for a few weeks while I work on stuf
   - [ ] ASK - Likely not possible
   - [x] Freq Hopper
   - [ ] LRS (Dan?)
+- [ ] Update Flowgraphs to use parameters (instead of variables) for flags, device args, gain settings
+  - [ ] NBFM
+  - [ ] SSB
+  - [ ] FreeDV
+  - [ ] POCSAG
+  - [ ] Paint
+  - [ ] CW
+  - [ ] ASK
+  - [ ] Freq Hopper
+  - [ ] LRS
 - [ ] Change code to use unmodified GNU Radio Generated Python
 - [ ] Add FreeDV Challenge
   - [x] Finish GRC Flowgraph
@@ -27,9 +37,9 @@ Everthing is gonna be broken in this branch for a few weeks while I work on stuf
 - [ ] Add Freq-hop challenge
   - [x] Finish GRC Flowgraph
   - [ ] Integrate into code
-- [ ] Update documention for new YAML format and new challenges
+- [ ] Update documentation for new YAML format and new challenges
 - [ ] Integrate Device Enumeration
-- [ ] Implemet WebUI
+- [ ] Implement WebUI
 
 # challengectl
 Queues challenges and gr-osmosdr radios to transmit for the RFCTF
