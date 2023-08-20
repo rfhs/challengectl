@@ -6,12 +6,12 @@ options:
     cmake_opt: ''
     comment: ''
     copyright: ''
-    description: ''
+    description: NBFM Transmitter with adjustable audio levels
     gen_cmake: 'On'
     gen_linking: dynamic
     generate_options: no_gui
     hier_block_src_path: '.:'
-    id: fhss_tx
+    id: nbfm
     max_nouts: '0'
     output_language: python
     placement: (0,0)
@@ -22,13 +22,13 @@ options:
     run_options: run
     sizing_mode: fixed
     thread_safe_setters: ''
-    title: Freq Hopper
+    title: NBFM Transmitter
     window_size: (1000,1000)
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [8, 4.0]
+    coordinate: [8, 8]
     rotation: 0
     state: enabled
 
@@ -42,21 +42,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [200, 4.0]
+    coordinate: [8, 140.0]
     rotation: 0
     state: enabled
-- name: hopset
-  id: variable
-  parameters:
-    comment: ''
-    value: hop_set.mkhopset(seed,rand_low,rand_high,hop_rate,hop_time)
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [384, 4.0]
-    rotation: 0
-    state: true
 - name: if_rate
   id: variable
   parameters:
@@ -66,67 +54,24 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [296, 4.0]
+    coordinate: [104, 140.0]
     rotation: 0
     state: true
-- name: num_channels
-  id: variable
+- name: variable_low_pass_filter_taps_0
+  id: variable_low_pass_filter_taps
   parameters:
+    beta: '6.76'
     comment: ''
-    value: ((((rf_rate/2)-channel_spacing)/channel_spacing)*2)+1
+    cutoff_freq: '3000'
+    gain: audio_gain
+    samp_rate: wav_rate
+    width: '300'
+    win: window.WIN_HAMMING
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [560, 4.0]
-    rotation: 0
-    state: true
-- name: rand_high
-  id: variable
-  parameters:
-    comment: ''
-    value: (((rf_rate/2)-channel_spacing)/channel_spacing)
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [760, 4.0]
-    rotation: 0
-    state: true
-- name: rand_low
-  id: variable
-  parameters:
-    comment: ''
-    value: -(((rf_rate/2)-channel_spacing)/channel_spacing)
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [672, 4.0]
-    rotation: 0
-    state: true
-- name: rf_rate
-  id: variable
-  parameters:
-    comment: ''
-    value: rf_samp_rate
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1152, 4.0]
-    rotation: 0
-    state: true
-- name: temp_hops
-  id: variable
-  parameters:
-    comment: ''
-    value: '[-3,-2,-1,0,1,2,3]'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [984, 4.0]
+    coordinate: [192, 300.0]
     rotation: 0
     state: true
 - name: analog_nbfm_tx_0
@@ -146,7 +91,24 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [304, 252.0]
+    coordinate: [440, 188.0]
+    rotation: 0
+    state: true
+- name: audio_gain
+  id: parameter
+  parameters:
+    alias: ''
+    comment: ''
+    hide: part
+    label: Audio Gain
+    short_id: ''
+    type: eng_float
+    value: '0.6'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [360, 300.0]
     rotation: 0
     state: true
 - name: bb_gain
@@ -163,25 +125,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1040, 364.0]
-    rotation: 0
-    state: true
-- name: blocks_multiply_xx_0
-  id: blocks_multiply_xx
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    num_inputs: '2'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1016, 208.0]
+    coordinate: [856, 4.0]
     rotation: 0
     state: true
 - name: blocks_null_sink_0
@@ -198,27 +142,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1336, 80.0]
+    coordinate: [1272, 360.0]
     rotation: 0
     state: true
-- name: blocks_repeat_0
-  id: blocks_repeat
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    interp: int(rf_rate*(1/hop_rate))
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    type: float
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [384, 148.0]
-    rotation: 0
-    state: enabled
 - name: blocks_throttle_0
   id: blocks_throttle
   parameters:
@@ -228,54 +154,16 @@ blocks:
     ignoretag: 'True'
     maxoutbuf: '0'
     minoutbuf: '0'
-    samples_per_second: rf_rate
+    samples_per_second: rf_samp_rate
     type: complex
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1072, 76.0]
+    coordinate: [1088, 356.0]
     rotation: 0
     state: true
-- name: blocks_vco_c_0
-  id: blocks_vco_c
-  parameters:
-    affinity: ''
-    alias: ''
-    amplitude: '1'
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_rate: rf_rate
-    sensitivity: 2*pi*channel_spacing
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [784, 132.0]
-    rotation: 0
-    state: true
-- name: blocks_vector_source_x_0
-  id: blocks_vector_source_x
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    repeat: 'True'
-    tags: '[]'
-    type: float
-    vector: hopset
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [8, 132.0]
-    rotation: 0
-    state: enabled
 - name: blocks_wavfile_source_0
   id: blocks_wavfile_source
   parameters:
@@ -291,24 +179,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [0, 276.0]
-    rotation: 0
-    state: true
-- name: channel_spacing
-  id: parameter
-  parameters:
-    alias: ''
-    comment: ''
-    hide: none
-    label: Channel Spacing
-    short_id: c
-    type: eng_float
-    value: 100e3
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [568, 484.0]
+    coordinate: [0, 212.0]
     rotation: 0
     state: true
 - name: dev
@@ -325,7 +196,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [704, 484.0]
+    coordinate: [360, 4.0]
     rotation: 0
     state: true
 - name: file
@@ -342,7 +213,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [0, 372.0]
+    coordinate: [256, 4.0]
     rotation: 0
     state: true
 - name: freq
@@ -359,59 +230,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 484.0]
-    rotation: 0
-    state: true
-- name: hop_rate
-  id: parameter
-  parameters:
-    alias: ''
-    comment: ''
-    hide: none
-    label: Hops per second
-    short_id: ''
-    type: intx
-    value: '10'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [432, 492.0]
-    rotation: 0
-    state: true
-- name: hop_set
-  id: epy_module
-  parameters:
-    alias: ''
-    comment: ''
-    source_code: "# this module will be imported in the into your flowgraph\n    #generate\
-      \ 60 seconds worth of hop data\nimport random\nimport time\nimport math\n\n\
-      def mkhopset(seed,randlow,randhigh,hps,seconds):\n    # self.message_port_pub(pmt.intern('debug'),\
-      \ pmt.intern('Generating New Hopset'))\n    # random.seed(math.ceil(time.time()))\
-      \       \n    random.seed(seed)       \n    hops = []\n    for i in range(int(math.ceil(hps*seconds))):\n\
-      \        hops.append(random.randint(randlow,randhigh))\n    return hops"
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [448, 68.0]
-    rotation: 0
-    state: true
-- name: hop_time
-  id: parameter
-  parameters:
-    alias: ''
-    comment: ''
-    hide: none
-    label: Seconds of Non-Repeating Hop Data
-    short_id: ''
-    type: eng_float
-    value: '60'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [256, 492.0]
+    coordinate: [576, 4.0]
     rotation: 0
     state: true
 - name: if_gain
@@ -428,20 +247,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1176, 364.0]
-    rotation: 0
-    state: true
-- name: import_0
-  id: import
-  parameters:
-    alias: ''
-    comment: ''
-    imports: from math import pi
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [200, 68.0]
+    coordinate: [992, 4.0]
     rotation: 0
     state: true
 - name: low_pass_filter_0
@@ -457,7 +263,7 @@ blocks:
     interp: '1'
     maxoutbuf: '0'
     minoutbuf: '0'
-    samp_rate: rf_rate
+    samp_rate: rf_samp_rate
     type: fir_filter_ccf
     width: 2e3
     win: window.WIN_HAMMING
@@ -465,24 +271,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [784, 236.0]
+    coordinate: [920, 172.0]
     rotation: 0
     state: enabled
-- name: note_0
-  id: note
-  parameters:
-    alias: ''
-    comment: ''
-    note: Hack RF uses the RF Gain to enable or disable (<14) the RF amplifier. HackRF
-      uses IF Gain for fine gain adjustment. BladeRF Only uses RF gain, and is generally
-      best set around 40 to 45.
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1192, 316.0]
-    rotation: 0
-    state: true
 - name: osmosdr_sink_0
   id: osmosdr_sink
   parameters:
@@ -726,7 +517,7 @@ blocks:
     minoutbuf: '0'
     nchan: '1'
     num_mboards: '1'
-    sample_rate: rf_rate
+    sample_rate: rf_samp_rate
     sync: none
     time_source0: ''
     time_source1: ''
@@ -741,7 +532,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1192, 140.0]
+    coordinate: [1176, 140.0]
     rotation: 0
     state: disabled
 - name: ppm
@@ -758,7 +549,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [832, 484.0]
+    coordinate: [488, 4.0]
     rotation: 0
     state: true
 - name: rational_resampler_xxx_0
@@ -769,7 +560,7 @@ blocks:
     comment: ''
     decim: if_rate
     fbw: '0'
-    interp: rf_rate
+    interp: rf_samp_rate
     maxoutbuf: '0'
     minoutbuf: '0'
     taps: '[]'
@@ -778,7 +569,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [576, 260.0]
+    coordinate: [712, 196.0]
     rotation: 0
     state: true
 - name: rational_resampler_xxx_1
@@ -792,13 +583,13 @@ blocks:
     interp: audio_rate
     maxoutbuf: '0'
     minoutbuf: '0'
-    taps: '[]'
+    taps: variable_low_pass_filter_taps_0
     type: fff
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [144, 332.0]
+    coordinate: [200, 196.0]
     rotation: 0
     state: true
 - name: rf_gain
@@ -815,7 +606,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1272, 364.0]
+    coordinate: [1088, 4.0]
     rotation: 0
     state: true
 - name: rf_samp_rate
@@ -832,24 +623,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1064, 484.0]
-    rotation: 0
-    state: true
-- name: seed
-  id: parameter
-  parameters:
-    alias: ''
-    comment: ''
-    hide: none
-    label: Seed
-    short_id: s
-    type: str
-    value: RFHS
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [168, 484.0]
+    coordinate: [720, 4.0]
     rotation: 0
     state: true
 - name: wav_rate
@@ -866,20 +640,16 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [0, 484.0]
+    coordinate: [1184, 4.0]
     rotation: 0
     state: true
 
 connections:
 - [analog_nbfm_tx_0, '0', rational_resampler_xxx_0, '0']
-- [blocks_multiply_xx_0, '0', blocks_throttle_0, '0']
-- [blocks_multiply_xx_0, '0', osmosdr_sink_0, '0']
-- [blocks_repeat_0, '0', blocks_vco_c_0, '0']
 - [blocks_throttle_0, '0', blocks_null_sink_0, '0']
-- [blocks_vco_c_0, '0', blocks_multiply_xx_0, '0']
-- [blocks_vector_source_x_0, '0', blocks_repeat_0, '0']
 - [blocks_wavfile_source_0, '0', rational_resampler_xxx_1, '0']
-- [low_pass_filter_0, '0', blocks_multiply_xx_0, '1']
+- [low_pass_filter_0, '0', blocks_throttle_0, '0']
+- [low_pass_filter_0, '0', osmosdr_sink_0, '0']
 - [rational_resampler_xxx_0, '0', low_pass_filter_0, '0']
 - [rational_resampler_xxx_1, '0', analog_nbfm_tx_0, '0']
 

@@ -21,8 +21,6 @@ import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
-import osmosdr
-import time
 
 
 
@@ -69,18 +67,9 @@ class ssb_tx(gr.top_block):
                 decimation=int(wav_samp_rate),
                 taps=[],
                 fractional_bw=0)
-        self.osmosdr_sink_0 = osmosdr.sink(
-            args="numchan=" + str(1) + " " + dev
-        )
-        self.osmosdr_sink_0.set_sample_rate(rf_samp_rate)
-        self.osmosdr_sink_0.set_center_freq(freq, 0)
-        self.osmosdr_sink_0.set_freq_corr(ppm, 0)
-        self.osmosdr_sink_0.set_gain(rf_gain, 0)
-        self.osmosdr_sink_0.set_if_gain(if_gain, 0)
-        self.osmosdr_sink_0.set_bb_gain(bb_gain, 0)
-        self.osmosdr_sink_0.set_antenna('', 0)
-        self.osmosdr_sink_0.set_bandwidth(0, 0)
         self.blocks_wavfile_source_0 = blocks.wavfile_source(wav_file, False)
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, rf_samp_rate,True)
+        self.blocks_null_sink_0 = blocks.null_sink(gr.sizeof_gr_complex*1)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_ff(audio_gain)
         self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
         self.band_pass_filter_0 = filter.interp_fir_filter_ccc(
@@ -103,9 +92,10 @@ class ssb_tx(gr.top_block):
         self.connect((self.band_pass_filter_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.blocks_float_to_complex_0, 0), (self.band_pass_filter_0, 0))
         self.connect((self.blocks_multiply_const_vxx_0, 0), (self.rational_resampler_xxx_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.blocks_null_sink_0, 0))
         self.connect((self.blocks_wavfile_source_0, 0), (self.blocks_multiply_const_vxx_0, 0))
         self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_float_to_complex_0, 0))
-        self.connect((self.rational_resampler_xxx_0_0, 0), (self.osmosdr_sink_0, 0))
+        self.connect((self.rational_resampler_xxx_0_0, 0), (self.blocks_throttle_0, 0))
 
 
     def get_audio_gain(self):
@@ -120,7 +110,6 @@ class ssb_tx(gr.top_block):
 
     def set_bb_gain(self, bb_gain):
         self.bb_gain = bb_gain
-        self.osmosdr_sink_0.set_bb_gain(self.bb_gain, 0)
 
     def get_dev(self):
         return self.dev
@@ -133,14 +122,12 @@ class ssb_tx(gr.top_block):
 
     def set_freq(self, freq):
         self.freq = freq
-        self.osmosdr_sink_0.set_center_freq(self.freq, 0)
 
     def get_if_gain(self):
         return self.if_gain
 
     def set_if_gain(self, if_gain):
         self.if_gain = if_gain
-        self.osmosdr_sink_0.set_if_gain(self.if_gain, 0)
 
     def get_mode(self):
         return self.mode
@@ -154,21 +141,19 @@ class ssb_tx(gr.top_block):
 
     def set_ppm(self, ppm):
         self.ppm = ppm
-        self.osmosdr_sink_0.set_freq_corr(self.ppm, 0)
 
     def get_rf_gain(self):
         return self.rf_gain
 
     def set_rf_gain(self, rf_gain):
         self.rf_gain = rf_gain
-        self.osmosdr_sink_0.set_gain(self.rf_gain, 0)
 
     def get_rf_samp_rate(self):
         return self.rf_samp_rate
 
     def set_rf_samp_rate(self, rf_samp_rate):
         self.rf_samp_rate = rf_samp_rate
-        self.osmosdr_sink_0.set_sample_rate(self.rf_samp_rate)
+        self.blocks_throttle_0.set_sample_rate(self.rf_samp_rate)
 
     def get_wav_file(self):
         return self.wav_file
