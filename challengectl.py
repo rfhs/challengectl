@@ -2,18 +2,21 @@
 # -*- coding: utf-8 -*-
 
 import os
-import sys
-import csv, yaml
+# import sys
+from multiprocessing import Process, Queue
+import string
+import argparse
 from time import sleep
 from random import randint, choice, shuffle
 import random
 import sqlite3
-from multiprocessing import Process, Queue
+import csv
+import yaml
 import numpy as np
-import string
-import argparse
 
-from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
+from challenges import (ask, cw, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx,
+                        freedv_tx, fhss_tx, ssb_tx)
+
 
 def build_database(flagfile, devicefile):
     """Create sqlite database based on flags file and devices file.
@@ -34,19 +37,24 @@ def build_database(flagfile, devicefile):
     # Create database schema
     c.execute('''CREATE TABLE flags(chal_id integer primary key,chal_name,flag,module,modopt1,modopt2,
     minwait integer,maxwait integer,freq1,freq2,freq3)''')
-    c.execute("CREATE TABLE flag_status(chal_id integer primary key,enabled,lastrun integer,ready)")
+    c.execute(
+        "CREATE TABLE flag_status(chal_id integer primary key,enabled,lastrun integer,ready)")
     c.execute("CREATE TABLE devices(dev_id integer primary key,dev_string,dev_busy)")
     # Insert flags from flag_line array into database
-    c.executemany("INSERT INTO flags VALUES (?,?,?,?,?,?,?,?,?,?,?)", flag_line)
+    c.executemany(
+        "INSERT INTO flags VALUES (?,?,?,?,?,?,?,?,?,?,?)", flag_line)
     # Add flag status row for each flag, setting each flag to enabled, lastrun blank, ready
-    c.executemany("INSERT INTO flag_status VALUES (?,1,'',1)", flag_line[:, :1])
+    c.executemany("INSERT INTO flag_status VALUES (?,1,'',1)",
+                  flag_line[:, :1])
     # Insert devices from devices array into database, set each device to not busy
     c.executemany("INSERT INTO devices VALUES (?,?,0)", devices)
     conn.commit()
     conn.close()
 
+
 class Radio:
     """TODO: Doc string here"""
+
     def __init__(self) -> None:
         pass
 
@@ -97,24 +105,27 @@ class transmitter:
         sleep(randint(mintime, maxtime))
         flag_q.put(flag_args[0])
 
-    def fire_usb(self, device_id, flag_q, device_q, *flag_args):
-        print("\nTransmitting USB\n")
-        flag_args = flag_args[0]
-        device = fetch_device(device_id)
-        wav_src = str(flag_args[1])
-        wav_rate = int(flag_args[2])
-        freq = int(flag_args[6]) * 1000
-        mintime = flag_args[4]
-        maxtime = flag_args[5]
-        # print("I ran fire_usb with flag=" + str(wav_src) + " and freq=" +
-        # str(freq) + " and wav_rate=" + str(wav_rate))
-        usb_tx.main(wav_src, wav_rate, freq, device)
-        sleep(3)
-        device_q.put(device_id)
-        sleep(randint(mintime, maxtime))
-        flag_q.put(flag_args[0])
+    # def fire_usb(self, device_id, flag_q, device_q, *flag_args):
+    #     print("\nTransmitting USB\n")
+    #     flag_args = flag_args[0]
+    #     device = fetch_device(device_id)
+    #     wav_src = str(flag_args[1])
+    #     wav_rate = int(flag_args[2])
+    #     freq = int(flag_args[6]) * 1000
+    #     mintime = flag_args[4]
+    #     maxtime = flag_args[5]
+    #     # print("I ran fire_usb with flag=" + str(wav_src) + " and freq=" +
+    #     # str(freq) + " and wav_rate=" + str(wav_rate))
+    #     usb_tx.main(wav_src, wav_rate, freq, device)
+    #     sleep(3)
+    #     device_q.put(device_id)
+    #     sleep(randint(mintime, maxtime))
+    #     flag_q.put(flag_args[0])
 
-    def fire_ssb(self,device_id, flag_q, device_q, *flag_args):
+    def fire_ssb(self, device_id, flag_q, device_q, *flag_args):
+        """
+        Call the ssb_tx flow graph to transmit Lower Sideband (LSB) or Upper Sideband (USB) modulated signals.
+        """
         mode = 'tbd'
         print(f"\nTransmitting SSB ({mode})\n")
         flag_args = flag_args[0]
@@ -126,13 +137,23 @@ class transmitter:
         maxtime = flag_args[5]
         # print("I ran fire_usb with flag=" + str(wav_src) + " and freq=" +
         # str(freq) + " and wav_rate=" + str(wav_rate))
-        usb_tx.main(wav_src, wav_rate, freq, device)
+        # TODO: Update the variables below.
+        tx = ssb_tx.ssb_tx(audio_gain=0.6, bb_gain=20, dev=device,
+                           freq=freq, if_gain=20, mode=mode, ppm=0,
+                           rf_gain=20, rf_samp_rate=2000000,
+                           wav_file=wav_src,
+                           wav_samp_rate=wav_rate)
+        tx.start()
+        tx.wait()
         sleep(3)
         device_q.put(device_id)
         sleep(randint(mintime, maxtime))
         flag_q.put(flag_args[0])
 
     def fire_nbfm(self, device_id, flag_q, device_q, *flag_args):
+        """
+        Calls the nbfm flow graph to transmit Narrow Band FM modulated signals
+        """
         print("\nTransmitting NBFM\n")
         flag_args = flag_args[0]
         device = fetch_device(device_id)
@@ -143,7 +164,13 @@ class transmitter:
         maxtime = flag_args[5]
         # print("I ran fire_nbfm with flag=" + str(wav_src) + " and freq=" +
         # str(freq) + " and wav_rate=" + str(wav_rate))
-        nbfm.main(wav_src, wav_rate, freq, device)
+        # nbfm.main(wav_src, wav_rate, freq, device)
+        # TODO: Update the variables below.
+        tx = nbfm.nbfm(audio_gain=0.6, bb_gain=20, dev=device,
+                       file=wav_src, freq=freq, if_gain=20,
+                       ppm=0, rf_gain=20, rf_samp_rate=2000000, wav_rate=wav_rate)
+        tx.start()
+        tx.wait()
         sleep(3)
         device_q.put(device_id)
         sleep(randint(mintime, maxtime))
@@ -195,7 +222,8 @@ class transmitter:
         lrspageropts = lrs_pager.argument_parser().parse_args(flag.split())
         # Generate pager.bin file
         # Generate random filename in /tmp/ for pager bin file
-        randomstring = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+        randomstring = ''.join(random.choices(
+            string.ascii_uppercase + string.digits, k=6))
         outfile = f"/tmp/lrs_{randomstring}.bin"
         lrspageropts.outputfile = outfile
         lrs_pager.main(options=lrspageropts)
@@ -234,7 +262,8 @@ def select_freq(band):
         for row in reader:
             if row[0] == band:
                 freq = randint(int(row[1]), int(row[2]))
-                return((freq, row[1], row[2]))
+                return ((freq, row[1], row[2]))
+
 
 def select_dvbt(channel):
     """TODO: Deprecate me"""
@@ -242,7 +271,8 @@ def select_dvbt(channel):
         reader = csv.reader(f)
         for row in reader:
             if row[0] == channel:
-                return(int(row[1]))
+                return (int(row[1]))
+
 
 def read_flags(flags_file):
     """Read lines from flags_file and return a list of lists for each row in the flags_file. 
@@ -256,6 +286,7 @@ def read_flags(flags_file):
             flag_input.append(row)
     return flag_input
 
+
 def read_devices(devices_file):
     """Read lines from devices file, and return a list of lists for each row in the devices file."""
     devices_input = []
@@ -264,6 +295,7 @@ def read_devices(devices_file):
         for row in reader:
             devices_input.append(row)
     return devices_input
+
 
 def fetch_device(dev_id):
     """Query database for device string for a given device id and return the device string."""
@@ -275,15 +307,19 @@ def fetch_device(dev_id):
     conn.close()
     return device[0]
 
+
 def argument_parser():
-    parser = argparse.ArgumentParser(description="A script to run SDR challenges on multiple SDR devices.")
+    parser = argparse.ArgumentParser(
+        description="A script to run SDR challenges on multiple SDR devices.")
     parser.add_argument('flagfile', help="Flags file")
     parser.add_argument('devicefile', help="Devices file")
     parser.add_argument("-v", "--verbose", action="store_true")
     return parser
 
+
 def parse_yaml(configfile):
     pass
+
 
 def main(options=None):
     if options is None:
@@ -357,13 +393,16 @@ def main(options=None):
 
             print(f"\nPainting Waterfall on {txfreq}\n")
             # spectrum_paint.main(current_chal[7] * 1000, fetch_device(dev_available))
-            p = Process(target=spectrum_paint.main, args=(txfreq * 1000, fetch_device(dev_available)))  # , daemon=True)
+            p = Process(target=spectrum_paint.main, args=(
+                txfreq * 1000, fetch_device(dev_available)))  # , daemon=True)
             p.start()
             p.join()
             print(f"\nStarting {cc_name} on {txfreq}")
             # Create list of challenge module arguments, using txfreq to allow setting random freq here instead of in the challenge module
-            challengeargs = [cc_id, cc_flag, cc_modopt1, cc_modopt2, cc_minwait, cc_maxwait, txfreq]
-            p = Process(target=getattr(t, "fire_" + cc_module), args=(dev_available, flag_Q, device_Q, challengeargs))
+            challengeargs = [cc_id, cc_flag, cc_modopt1,
+                             cc_modopt2, cc_minwait, cc_maxwait, txfreq]
+            p = Process(target=getattr(t, "fire_" + cc_module),
+                        args=(dev_available, flag_Q, device_Q, challengeargs))
             p.start()
             # #we need a way to know if p.start errored or not
             # os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
@@ -379,6 +418,7 @@ def main(options=None):
             pass
         finally:
             exit()
+
 
 if __name__ == '__main__':
     main()
