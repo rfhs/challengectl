@@ -4,6 +4,7 @@
 import os
 # import sys
 from multiprocessing import Process, Queue
+import logging
 import string
 import argparse
 from time import sleep
@@ -12,50 +13,144 @@ import random
 import sqlite3
 import csv
 import yaml
-import numpy as np
+# import numpy as np
 
 from challenges import (ask, cw, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx,
                         freedv_tx, fhss_tx, ssb_tx)
 
+logging.basicConfig(filename='challengectl.log',
+                    filemode='w',
+                    level=logging.DEBUG,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%d %b %Y %H:%M:%S')
 
-def build_database(flagfile, devicefile):
-    """Create sqlite database based on flags file and devices file.
-       Database file name will be based on
-       conference name extracted from first line of flags file."""
-    flag_input = read_flags(flagfile)
-    # Skip first line of flag_input where conference information is stored
-    # Add remaining lines to flag_line array
-    flag_line = np.asarray(flag_input[1:])
+modulation_parameters = {
+    'ask': {
+        'mandatory': [
+            'flag',
+            'frequency'
+        ],
+        'optional': [
+            'min_delay',
+            'max_delay'
+        ]
+    },
+    'cw': {
+       'mandatory': [
+            'flag',
+            'frequency',
+            'speed'
+        ],
+        'optional': [
+            'min_delay',
+            'max_delay'
+        ]
+    }, 'nbfm': {
+        'mandatory': [
+            'flag',
+            'frequency'
+        ],
+        'optional': [
+            'min_delay',
+            'max_delay',
+            'wav_samplerate'
+        ]
+    }, 'ssb': {
+        'mandatory': [
+            'flag',
+            'frequency',
+            'mode'
+        ],
+        'optional': [
+            'min_delay',
+            'max_delay',
+            'wav_samplerate'
+        ]
+    }, 'pocsag': {
+        'mandatory': [
+            'flag',
+            'frequency',
+            'capcode'
+        ],
+        'optional': [
+            'min_delay',
+            'max_delay'
+        ]
+    }, 'lrs': {
+        'mandatory': [
+            'flag',
+            'frequency'
+        ],
+        'optional': [
+            'min_delay',
+            'max_delay'
+        ]
+    }, 'freedv':{
+        'mandatory': [
+            'flag',
+            'frequency',
+            'mode'
+        ],
+        'optional': [
+            'min_delay',
+            'max_delay',
+            'wav_samplerate'
+        ]
+    }, 'fhss': {
+        'mandatory': [
+            'flag',
+            'frequency',
+            'seed',
+            'hop_rate',
+            'hop_time',
+            'channel_spacing'
+        ],
+        'optional': [
+            'min_delay',
+            'max_delay',
+            'wav_samplerate'
+        ]
+    }
+}
 
-    devices = read_devices(devicefile)
+# def build_database(flagfile, devicefile):
+#     """Create sqlite database based on flags file and devices file.
+#        Database file name will be based on
+#        conference name extracted from first line of flags file."""
+#     flag_input = read_flags(flagfile)
+#     # Skip first line of flag_input where conference information is stored
+#     # Add remaining lines to flag_line array
+#     flag_line = np.asarray(flag_input[1:])
 
-    # Read name of conference from first line of flag file
-    conference = flag_input[0][0]
-    # Create sqlite database for conference and connect to the database
-    conn = sqlite3.connect(conference + ".db")
-    c = conn.cursor()
-    # Create database schema
-    c.execute('''CREATE TABLE flags(chal_id integer primary key,chal_name,flag,module,modopt1,modopt2,
-    minwait integer,maxwait integer,freq1,freq2,freq3)''')
-    c.execute(
-        "CREATE TABLE flag_status(chal_id integer primary key,enabled,lastrun integer,ready)")
-    c.execute("CREATE TABLE devices(dev_id integer primary key,dev_string,dev_busy)")
-    # Insert flags from flag_line array into database
-    c.executemany(
-        "INSERT INTO flags VALUES (?,?,?,?,?,?,?,?,?,?,?)", flag_line)
-    # Add flag status row for each flag, setting each flag to enabled, lastrun blank, ready
-    c.executemany("INSERT INTO flag_status VALUES (?,1,'',1)",
-                  flag_line[:, :1])
-    # Insert devices from devices array into database, set each device to not busy
-    c.executemany("INSERT INTO devices VALUES (?,?,0)", devices)
-    conn.commit()
-    conn.close()
+#     devices = read_devices(devicefile)
+
+#     # Read name of conference from first line of flag file
+#     conference = flag_input[0][0]
+#     # Create sqlite database for conference and connect to the database
+#     conn = sqlite3.connect(conference + ".db")
+#     c = conn.cursor()
+#     # Create database schema
+#     c.execute('''CREATE TABLE flags(chal_id integer primary key,chal_name,flag,module,modopt1,modopt2,
+#     minwait integer,maxwait integer,freq1,freq2,freq3)''')
+#     c.execute(
+#         "CREATE TABLE flag_status(chal_id integer primary key,enabled,lastrun integer,ready)")
+#     c.execute("CREATE TABLE devices(dev_id integer primary key,dev_string,dev_busy)")
+#     # Insert flags from flag_line array into database
+#     c.executemany(
+#         "INSERT INTO flags VALUES (?,?,?,?,?,?,?,?,?,?,?)", flag_line)
+#     # Add flag status row for each flag, setting each flag to enabled, lastrun blank, ready
+#     c.executemany("INSERT INTO flag_status VALUES (?,1,'',1)",
+#                   flag_line[:, :1])
+#     # Insert devices from devices array into database, set each device to not busy
+#     c.executemany("INSERT INTO devices VALUES (?,?,0)", devices)
+#     conn.commit()
+#     conn.close()
 
 
 class Radio:
     """TODO: Doc string here"""
 
-    def __init__(self) -> None:
+    def __init__(self, properties: dict) -> None:
         pass
 
     def check_freqrange(self, frequency) -> bool:
@@ -63,6 +158,50 @@ class Radio:
 
     def set_device_string(self, model, name, bias_t) -> str:
         pass
+
+
+class Challenge:
+    '''
+    Contains properies and functions related to individual challenges
+    '''
+    def __init__(self, properties: dict) -> None:
+        self.properties = properties
+        self.name:str = properties.get('name')
+        if properties.get('enabled') is not None:
+            self.enabled:bool = properties.get('enabled')
+        else:
+            True
+
+    def check_modulation(self, requested_modulation: str) -> bool:
+        '''
+        Checks if the modulation type is valid. Disables challenge if it's not.
+        '''
+        # Move this to another file
+        # valid_modulation_types = ['ask', 'cw', 'nbfm', 'ssb', 'pocsag', 'lrs', 'freedv', 'fhss']
+        valid_modulation_types = modulation_parameters.keys()
+        if requested_modulation in valid_modulation_types:
+            passed = True
+            logging.info("Modulation check for %s passed.", self.name)
+        else:
+            logging.error("Unknown modulation type %s in %s", requested_modulation, self.name)
+            self.enabled = False
+            passed = False
+        return passed
+
+    # TODO: Finish this
+    def check_parameters(self) -> None:
+        '''
+        Checks for manatory parameters
+        Sets defaults for optional parameters
+        '''
+        if self.properties.get('flag') is not None:
+            # Check if file exists
+            self.flag = self.properties.get('flag')
+            if not os.path.exists(self.flag):
+                logging.error("File not found: %s", self.flag)
+                self.enabled = False
+
+
 
 
 # TODO: Maybe rename this to Flowgraph?
@@ -124,7 +263,8 @@ class transmitter:
 
     def fire_ssb(self, device_id, flag_q, device_q, *flag_args):
         """
-        Call the ssb_tx flow graph to transmit Lower Sideband (LSB) or Upper Sideband (USB) modulated signals.
+        Call the ssb_tx flow graph to transmit Lower Sideband (LSB)
+        or Upper Sideband (USB) modulated signals.
         """
         mode = 'tbd'
         print(f"\nTransmitting SSB ({mode})\n")
@@ -265,60 +405,100 @@ def select_freq(band):
                 return ((freq, row[1], row[2]))
 
 
-def select_dvbt(channel):
-    """TODO: Deprecate me"""
-    with open("dvbt_channels.txt") as f:
-        reader = csv.reader(f)
-        for row in reader:
-            if row[0] == channel:
-                return (int(row[1]))
+# def select_dvbt(channel):
+#     """TODO: Deprecate me"""
+#     with open("dvbt_channels.txt") as f:
+#         reader = csv.reader(f)
+#         for row in reader:
+#             if row[0] == channel:
+#                 return (int(row[1]))
 
 
-def read_flags(flags_file):
-    """Read lines from flags_file and return a list of lists for each row in the flags_file. 
-    The first item in the list contains conference information, and the remaining items in the
-    list contain information about each flag."""
+# def read_flags(flags_file):
+#     """Read lines from flags_file and return a list of lists for each row in the flags_file.
+#     The first item in the list contains conference information, and the remaining items in the
+#     list contain information about each flag."""
 
-    flag_input = []
-    with open(flags_file) as f:
-        reader = csv.reader(f)
-        for row in reader:
-            flag_input.append(row)
-    return flag_input
-
-
-def read_devices(devices_file):
-    """Read lines from devices file, and return a list of lists for each row in the devices file."""
-    devices_input = []
-    with open(devices_file) as f:
-        reader = csv.reader(f, quotechar='"')
-        for row in reader:
-            devices_input.append(row)
-    return devices_input
+#     flag_input = []
+#     with open(flags_file) as f:
+#         reader = csv.reader(f)
+#         for row in reader:
+#             flag_input.append(row)
+#     return flag_input
 
 
-def fetch_device(dev_id):
-    """Query database for device string for a given device id and return the device string."""
-    global conference
-    conn = sqlite3.connect(conference + ".db")
-    c = conn.cursor()
-    c.execute("SELECT dev_string FROM devices WHERE dev_id=?", (dev_id,))
-    device = c.fetchone()
-    conn.close()
-    return device[0]
+# def read_devices(devices_file):
+#     """Read lines from devices file, and return a list of lists for each row in the devices file."""
+#     devices_input = []
+#     with open(devices_file) as f:
+#         reader = csv.reader(f, quotechar='"')
+#         for row in reader:
+#             devices_input.append(row)
+#     return devices_input
+
+
+# def fetch_device(dev_id):
+#     """Query database for device string for a given device id and return the device string."""
+#     global conference
+#     conn = sqlite3.connect(conference + ".db")
+#     c = conn.cursor()
+#     c.execute("SELECT dev_string FROM devices WHERE dev_id=?", (dev_id,))
+#     device = c.fetchone()
+#     conn.close()
+#     return device[0]
 
 
 def argument_parser():
     parser = argparse.ArgumentParser(
         description="A script to run SDR challenges on multiple SDR devices.")
-    parser.add_argument('flagfile', help="Flags file")
-    parser.add_argument('devicefile', help="Devices file")
+    # parser.add_argument('flagfile', help="Flags file")
+    # parser.add_argument('devicefile', help="Devices file")
+    parser.add_argument('configfile', help="YAML Configuration File", default='config.yml')
     parser.add_argument("-v", "--verbose", action="store_true")
     return parser
 
 
-def parse_yaml(configfile):
+def check_radios_config(radio_config):
+    # check uniqueness of names
+    # check freq limits
+    # check sanity of gain values
+    # check sanity of frequencies
+
     pass
+
+
+def check_challenges(challenge_config):
+    # check uniqeness of names
+    # check modulation type
+    # check options against modulator
+    # check sanity of frequencies and other things that involve numbers
+    pass
+
+
+def parse_yaml(configfile) -> dict:
+    '''
+    Parse config.yml, check for mandatory fields
+    '''
+    parse_err = Exception('Cannot parse config file. Check log for more details')
+    with open(configfile, 'r', encoding='utf-8') as conf_file:
+        config = yaml.safe_load(conf_file)
+
+    if config.get('radios') is not None:
+        # radio_confg = config['radios']
+        pass
+    else:
+        logging.critical("Section 'radios' is missing from configuration")
+        raise parse_err
+
+    if config.get('challenges') is not None:
+        # challenge_config = config['challenges']
+        pass
+    else:
+        logging.critical("Section 'challenges' is missing from configuration")
+        raise parse_err
+
+    return config
+
 
 
 def main(options=None):
@@ -326,37 +506,36 @@ def main(options=None):
         options = argument_parser().parse_args()
 
     args = options
-    flagfile = args.flagfile
-    devicefile = args.devicefile
-    verbose = args.verbose
-    global conference
     # Create thread safe FIFO queues for devices and flags
     device_Q = Queue()
     flag_Q = Queue()
     # Read flags file
-    flag_input = read_flags(flagfile)
+    config = parse_yaml(args.configfile)
+    # flag_input = read_flags(flagfile)
     # Extract conference name from first item returned by read_flags
-    conference = flag_input[0][0]
+    conference = config['conference']['name']
     # Check to see if database for conference name exists, create it if not
-    if not os.path.exists(conference + ".db"):
-        build_database(flagfile, devicefile)
-    # Connect to conference database
-    conn = sqlite3.connect(conference + ".db")
-    c = conn.cursor()
+    # if not os.path.exists(conference + ".db"):
+    #     build_database(flagfile, devicefile)
+    # # Connect to conference database
+    # conn = sqlite3.connect(conference + ".db")
+    # c = conn.cursor()
 
     # Create a list of device IDs from devices in the database
-    c.execute("SELECT dev_id FROM devices")
-    dev_list = c.fetchall()
+    # c.execute("SELECT dev_id FROM devices")
+    # dev_list = c.fetchall()
+
+    dev_list = futurethinghere
     for row in dev_list:
         device_Q.put(row[0])
 
     # Create a list of challenge IDs based on flags that are enabled in the database
-    c.execute("SELECT chal_id FROM flag_status WHERE enabled=1")
-    flag_list = c.fetchall()
+    # c.execute("SELECT chal_id FROM flag_status WHERE enabled=1")
+    flag_list = config['challenges']
     flag_list = list(sum(flag_list, ()))
     # Randomize order of flag_list
     shuffle(flag_list)
-    print(flag_list)
+    # logging.info(f'Initial flag transmision order: {flag_list}')
     # Put flag_list into thread safe flag_Q
     for row in flag_list:
         flag_Q.put(row)
