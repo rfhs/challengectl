@@ -7,6 +7,7 @@ Everthing is gonna be broken in this branch for a few weeks while I work on stuf
   - [x] Create YAML Structure
   - [ ] Update Code to Parse YAML
 - [ ] Implement a test mode
+- [ ] Better Logging
 - [ ] Update USB Flowgraph to SSB (Both LSB and USB Capable)
   - [x] Finish GRC Flowgraph
   - [ ] Integrate into code
@@ -42,6 +43,10 @@ Everthing is gonna be broken in this branch for a few weeks while I work on stuf
 - [ ] Add support for multiple TX frontends per device
 - [ ] Add frequency limits and device args per TX frontend for different amp/filter/antenna setups
 - [ ] Implement WebUI
+  - [ ] Admin Status Page
+  - [ ] Public Status Page
+  - [ ] Challenge Editor
+  - [ ] Log Viewer
 - [ ] Create a multihost mode with a runner that can query a controller
   - [ ] Create "API" to communicate between runner and controller
   - [ ] Sync flags and wav files from controller to runner
