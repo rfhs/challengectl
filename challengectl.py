@@ -59,8 +59,12 @@ class transmitter:
         ask.main(flag.encode("utf-8").hex(), freq, device)
         sleep(3)
         device_q.put(device_id)
-        sleep(randint(mintime, maxtime))
-        flag_q.put(flag_args[0])
+        norandsleep = flag_args[8]
+        if(norandsleep == False):
+            sleep(randint(mintime, maxtime))
+        replaceinqueue = flag_args[7]
+        if(replaceinqueue != False):
+            flag_q.put(flag_args[0])
 
     def fire_cw(self, device_id, flag_q, device_q, *flag_args):
         print("\nTransmitting CW\n")
@@ -79,8 +83,12 @@ class transmitter:
         p.join()
         sleep(3)
         device_q.put(device_id)
-        sleep(randint(mintime, maxtime))
-        flag_q.put(flag_args[0])
+        norandsleep = flag_args[8]
+        if(norandsleep == False):
+            sleep(randint(mintime, maxtime))
+        replaceinqueue = flag_args[7]
+        if(replaceinqueue != False):
+            flag_q.put(flag_args[0])
 
     def fire_usb(self, device_id, flag_q, device_q, *flag_args):
         print("\nTransmitting USB\n")
@@ -96,8 +104,12 @@ class transmitter:
         usb_tx.main(wav_src, wav_rate, freq, device)
         sleep(3)
         device_q.put(device_id)
-        sleep(randint(mintime, maxtime))
-        flag_q.put(flag_args[0])
+        norandsleep = flag_args[8]
+        if(norandsleep == False):
+            sleep(randint(mintime, maxtime))
+        replaceinqueue = flag_args[7]
+        if(replaceinqueue != False):
+            flag_q.put(flag_args[0])
 
     def fire_nbfm(self, device_id, flag_q, device_q, *flag_args):
         print("\nTransmitting NBFM\n")
@@ -113,8 +125,12 @@ class transmitter:
         nbfm.main(wav_src, wav_rate, freq, device)
         sleep(3)
         device_q.put(device_id)
-        sleep(randint(mintime, maxtime))
-        flag_q.put(flag_args[0])
+        norandsleep = flag_args[8]
+        if(norandsleep == False):
+            sleep(randint(mintime, maxtime))
+        replaceinqueue = flag_args[7]
+        if(replaceinqueue != False):
+            flag_q.put(flag_args[0])
 
     def fire_pocsag(self, device_id, flag_q, device_q, *flag_args):
         print("\nTransmitting POCSAG\n")
@@ -141,10 +157,14 @@ class transmitter:
         # print("Slept for 30 seconds")
         device_q.put(device_id)
         # print("Returned Device top pool")
-        sleep(randint(mintime, maxtime))
+        norandsleep = flag_args[8]
+        if(norandsleep == False):
+            sleep(randint(mintime, maxtime))
         # sleep(10)
         # print("Slept for 10 seconds")
-        flag_q.put(flag_args[0])
+        replaceinqueue = flag_args[7]
+        if(replaceinqueue != False):
+            flag_q.put(flag_args[0])
         # print("Returned flag to pool")
 
     def fire_lrs(self, device_id, flag_q, device_q, *flag_args):
@@ -185,10 +205,14 @@ class transmitter:
         print("Removed outfile")
         device_q.put(device_id)
         print("Released Radio to pool")
-        sleep(randint(mintime, maxtime))
+        norandsleep = flag_args[8]
+        if(norandsleep == False):
+            sleep(randint(mintime, maxtime))
         # sleep(10)
         print("Slept, returning flag to pool")
-        flag_q.put(flag_args[0])
+        replaceinqueue = flag_args[7]
+        if(replaceinqueue != False):
+            flag_q.put(flag_args[0])
         print("Returned flag to pool")
 
 
@@ -246,6 +270,7 @@ def argument_parser():
     parser.add_argument('flagfile', help="Flags file")
     parser.add_argument('devicefile', help="Devices file")
     parser.add_argument("-v", "--verbose", action="store_true")
+    parser.add_argument("-t", "--test", help="Run each challenge once to test flags.", action="store_true")
     return parser
 
 def main(options=None):
@@ -256,6 +281,7 @@ def main(options=None):
     flagfile = args.flagfile
     devicefile = args.devicefile
     verbose = args.verbose
+    test = args.test
     global conference
     # Create thread safe FIFO queues for devices and flags
     device_Q = Queue()
@@ -281,9 +307,12 @@ def main(options=None):
     c.execute("SELECT chal_id FROM flag_status WHERE enabled=1")
     flag_list = c.fetchall()
     flag_list = list(sum(flag_list, ()))
-    # Randomize order of flag_list
-    shuffle(flag_list)
+    # Randomize order of flag_list except when testing flags
+    if(test != True):
+        shuffle(flag_list)
     print(flag_list)
+    flag_count = len(flag_list)
+    challenges_transmitted = 0
     # Put flag_list into thread safe flag_Q
     for row in flag_list:
         flag_Q.put(row)
@@ -318,21 +347,32 @@ def main(options=None):
                 txfreq = freq_range[0]
                 freq_or_range = str(freq_range[1]) + "-" + str(freq_range[2])
 
-            print(f"\nPainting Waterfall on {txfreq}\n")
-            # spectrum_paint.main(current_chal[7] * 1000, fetch_device(dev_available))
-            p = Process(target=spectrum_paint.main, args=(txfreq * 1000, fetch_device(dev_available)))  # , daemon=True)
-            p.start()
-            p.join()
+            # Paint waterfall every time during the CTF, or only once when testing
+            if(test != True or challenges_transmitted == 0):
+                print(f"\nPainting Waterfall on {txfreq}\n")
+                # spectrum_paint.main(current_chal[7] * 1000, fetch_device(dev_available))
+                p = Process(target=spectrum_paint.main, args=(txfreq * 1000, fetch_device(dev_available)))  # , daemon=True)
+                p.start()
+                p.join()
             print(f"\nStarting {cc_name} on {txfreq}")
             # Create list of challenge module arguments, using txfreq to allow setting random freq here instead of in the challenge module
-            challengeargs = [cc_id, cc_flag, cc_modopt1, cc_modopt2, cc_minwait, cc_maxwait, txfreq]
+            replaceinqueue = True
+            norandsleep = False
+            if(test):
+                replaceinqueue = False
+                norandsleep = True
+            challengeargs = [cc_id, cc_flag, cc_modopt1, cc_modopt2, cc_minwait, cc_maxwait, txfreq, replaceinqueue, norandsleep]
             p = Process(target=getattr(t, "fire_" + cc_module), args=(dev_available, flag_Q, device_Q, challengeargs))
             p.start()
+            challenges_transmitted += 1
             # #we need a way to know if p.start errored or not
             # os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
             # os.system('''timeout 15 ssh -F /root/wctf/liludallasmultipass/ssh/config -oStrictHostKeyChecking=no -oConnectTimeout=10 -oPasswordAuthentication=no -n scoreboard echo ''' + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
             dev_available = device_Q.get()
             sleep(1)
+            if(test == True and flag_Q.empty()):
+                print("Testing complete")
+                exit()
     except KeyboardInterrupt:
         print("Trying to Exit!")
         try:
