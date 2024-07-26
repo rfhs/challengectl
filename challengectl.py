@@ -97,7 +97,7 @@ class transmitter:
         wav_src = str(flag_args[1])
         if not os.path.isfile(wav_src):
             print("Unable to find wav file {}".format(wav_src))
-            exit()
+            exit(1)
         wav_rate = int(flag_args[2])
         freq = int(flag_args[6]) * 1000
         mintime = flag_args[4]
@@ -121,7 +121,7 @@ class transmitter:
         wav_src = str(flag_args[1])
         if not os.path.isfile(wav_src):
             print("Unable to find wav file {}".format(wav_src))
-            exit()
+            exit(1)
         wav_rate = int(flag_args[2])
         freq = int(flag_args[6]) * 1000
         mintime = flag_args[4]
