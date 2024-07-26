@@ -267,8 +267,8 @@ def fetch_device(dev_id):
 
 def argument_parser():
     parser = argparse.ArgumentParser(description="A script to run SDR challenges on multiple SDR devices.")
-    parser.add_argument('flagfile', help="Flags file")
-    parser.add_argument('devicefile', help="Devices file")
+    parser.add_argument("-f", '--flagfile', help="Flags file")
+    parser.add_argument("-d", '--devicefile', help="Devices file")
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("-t", "--test", help="Run each challenge once to test flags.", action="store_true")
     return parser
