@@ -1,0 +1,7 @@
+testflagsfile,1660312800,1660496400
+0,HAM_DIGITAL_9,challenges/defcon30/psk31.wav,usb,48000,,60,90,147105,,
+1,HAM_DIGITAL_6,challenges/defcon30/mfsk31.wav,nbfm,48000,,60,90,443925,,
+2,HAM_MORSE_1,GO TAKE THE HAM EXAM,cw,35,,60,90,ham_900,,
+3,SDR_ASK_1,The Silence of the Lambs was filmed in Pittsburgh Pennsylvania.,ask,,,60,90,ham_440,,
+4,POCSAG_RX,The Clock That Went Backward,pocsag,198468,,60,90,444500,,
+5,LRS_RX,-s 20 -p 238 -pf 1,lrs,,,60,90,467750,,
