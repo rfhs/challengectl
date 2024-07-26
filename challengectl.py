@@ -89,6 +89,8 @@ class transmitter:
         replaceinqueue = flag_args[7]
         if(replaceinqueue != False):
             flag_q.put(flag_args[0])
+        if(p.exitcode != 0):
+            sys.exit(p.exitcode)
 
     def fire_usb(self, device_id, flag_q, device_q, *flag_args):
         print("\nTransmitting USB\n")
@@ -326,6 +328,8 @@ def main(options=None):
     dev_available = device_Q.get()
     t = transmitter()
 
+    jobs = []
+
     try:
         while dev_available != None:
             chal_id = flag_Q.get()
@@ -370,6 +374,8 @@ def main(options=None):
             challengeargs = [cc_id, cc_flag, cc_modopt1, cc_modopt2, cc_minwait, cc_maxwait, txfreq, replaceinqueue, norandsleep]
             p = Process(target=getattr(t, "fire_" + cc_module), args=(dev_available, flag_Q, device_Q, challengeargs))
             p.start()
+            if(test == True):
+                jobs.append(p)
             challenges_transmitted += 1
             # #we need a way to know if p.start errored or not
             # os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
@@ -377,8 +383,22 @@ def main(options=None):
             dev_available = device_Q.get()
             sleep(1)
             if(test == True and flag_Q.empty()):
+                returnvalue = 0
                 print("Testing complete")
-                exit()
+                while(len(jobs)>0):
+                    proc = jobs[0]
+                    exitcode = proc.exitcode
+                    jobs.remove(proc)
+                    if(exitcode == None):
+                        jobs.append(proc)
+                        continue
+                    if(exitcode != 0):
+                        print("Failed")
+                        returnvalue = 1
+                        exit(returnvalue)
+                    #print("exitcode: {}".format(proc.exitcode))
+                    proc.join()
+                exit(returnvalue)
     except KeyboardInterrupt:
         print("Trying to Exit!")
         try:
