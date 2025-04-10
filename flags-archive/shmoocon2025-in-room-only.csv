@@ -1,0 +1,5 @@
+shmoocon2025,1736528400,1736701200
+0,HAM_SSTV_1,flags-archive/shmoocon2025/RFCTF-OnlyPaws.wav,usb,48000,,60,90,146500,,
+1,HAM MORSE 5,HAM MORSE 5: ICEMAN SKINNY TOM SEGURA,cw,65,,60,90,432080,,
+2,SDR_ASK_5,SDR_ASK_5: Rob RGB Lights and ShmooCon wands,ask,,,60,90,144290,,
+3,POCSAG_TX,Transmit your team name via 1200bps POCSAG to 145.6MHz capcode 2024032 for more points.,pocsag,202432,,120,180,444500,,
