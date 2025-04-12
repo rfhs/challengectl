@@ -45,7 +45,7 @@ class spectrum_paint(gr.top_block):
         self.osmosdr_sink_0.set_gain(50, 0)
         self.osmosdr_sink_0.set_if_gain(20, 0)
         self.osmosdr_sink_0.set_bb_gain(20, 0)
-        self.osmosdr_sink_0.set_antenna('', 0)
+        self.osmosdr_sink_0.set_antenna(ant, 0)
         self.osmosdr_sink_0.set_bandwidth(0, 0)
 
         self.digital_ofdm_cyclic_prefixer_0 = digital.ofdm_cyclic_prefixer(4096, int(4096 + 4096 / 8), 0, '')
@@ -87,12 +87,14 @@ class spectrum_paint(gr.top_block):
 #     main.tb.stop()
 
 
-def main(freq, device, top_block_cls=spectrum_paint, options=None):
+def main(freq, device, antenna, top_block_cls=spectrum_paint, options=None):
 
     global frequency
     global dev
+    global ant
     frequency = freq
     dev = str(device)
+    ant = str(antenna)
 
     tb = top_block_cls()
     tb.start()

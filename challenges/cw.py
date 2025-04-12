@@ -95,14 +95,15 @@ class cw(gr.top_block):
             taps=[],
             fractional_bw=0.0,
         )
-        self.osmosdr_sink_0 = osmosdr.sink(args="numchan=" + str(1) + " " + str(dev))
+        #self.osmosdr_sink_0 = osmosdr.sink(args="numchan=" + str(1) + " " + str(dev))
+        self.osmosdr_sink_0 = osmosdr.sink(args=str(dev))
         self.osmosdr_sink_0.set_sample_rate(2000000)
         self.osmosdr_sink_0.set_center_freq(freq, 0)
         self.osmosdr_sink_0.set_freq_corr(0, 0)
         self.osmosdr_sink_0.set_gain(37, 0)
         self.osmosdr_sink_0.set_if_gain(32, 0)
         self.osmosdr_sink_0.set_bb_gain(32, 0)
-        self.osmosdr_sink_0.set_antenna("", 0)
+        self.osmosdr_sink_0.set_antenna(ant, 0)
         self.osmosdr_sink_0.set_bandwidth(0, 0)
 
         self.blocks_vector_source_x_0 = blocks.vector_source_c(morse, False, 1, [])
@@ -153,15 +154,17 @@ class cw(gr.top_block):
 #     main.tb.stop()
 
 
-def main(mesg, wordspm, frequency, device, top_block_cls=cw, options=None):
+def main(mesg, wordspm, frequency, device, antenna, top_block_cls=cw, options=None):
     global morse
     global wpm
     global freq
     global dev
+    global ant
 
     wpm = wordspm
     freq = frequency
     dev = device
+    ant = antenna
 
     morse_code = '0,'
     for char in mesg:
@@ -191,6 +194,8 @@ if __name__ == '__main__':
                       help="Frequency to transmit.", metavar="FREQ")
     parser.add_option("-d", "--dev", dest="dev",
                       help="Dev to transmit on.", metavar="DEV")
+    parser.add_option("-a", "--ant", dest="ant",
+                      help="Antenna to transmit on.", metavar="ANT")
 
     (options, args) = parser.parse_args()
 
@@ -200,4 +205,4 @@ if __name__ == '__main__':
             print("You forgot an arguement")
             parser.print_help()
             exit(-1)
-    main(options.msg, options.wpm, options.frequency, options.dev)
+    main(options.msg, options.wpm, options.frequency, options.dev, options.ant)

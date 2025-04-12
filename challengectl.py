@@ -55,8 +55,14 @@ class transmitter:
         freq = int(flag_args[6]) * 1000
         mintime = flag_args[4]
         maxtime = flag_args[5]
+        antenna = ""
+        if(device == "bladerf=1c4842b8d80e43438c042dbd752c6640,biastee=1"):
+            antenna = "TX2"
+            print("Set antenna to TX2")
+        else:
+            print("Antenna set to default empty string. device: {}".format(device))
         # print("I ran fire_ask with flag=" + str(flag) + " and freq=" + str(freq))
-        ask.main(flag.encode("utf-8").hex(), freq, device)
+        ask.main(flag.encode("utf-8").hex(), freq, device, antenna)
         sleep(3)
         device_q.put(device_id)
         norandsleep = flag_args[8]
@@ -76,9 +82,15 @@ class transmitter:
         freq = int(flag_args[6]) * 1000
         mintime = flag_args[4]
         maxtime = flag_args[5]
+        antenna = ""
+        if(device == "bladerf=1c4842b8d80e43438c042dbd752c6640,biastee=1"):
+            antenna = "TX2"
+            print("Set antenna to TX2")
+        else:
+            print("Antenna set to default empty string. device: {}".format(device))
         # print("I ran fire_cw with flag=" + str(flag) + " and freq=" +
         # str(freq) + " and speed=" + str(speed))
-        p = Process(target=cw.main, args=(flag, speed, freq, device))
+        p = Process(target=cw.main, args=(flag, speed, freq, device, antenna))
         p.start()
         p.join()
         sleep(3)
@@ -104,9 +116,15 @@ class transmitter:
         freq = int(flag_args[6]) * 1000
         mintime = flag_args[4]
         maxtime = flag_args[5]
+        antenna = ""
+        if(device == "bladerf=1c4842b8d80e43438c042dbd752c6640,biastee=1"):
+            antenna = "TX2"
+            print("Set antenna to TX2")
+        else:
+            print("Antenna set to default empty string. device: {}".format(device))
         # print("I ran fire_usb with flag=" + str(wav_src) + " and freq=" +
         # str(freq) + " and wav_rate=" + str(wav_rate))
-        usb_tx.main(wav_src, wav_rate, freq, device)
+        usb_tx.main(wav_src, wav_rate, freq, device, antenna)
         sleep(3)
         device_q.put(device_id)
         norandsleep = flag_args[8]
@@ -361,7 +379,16 @@ def main(options=None):
             if(test != True or challenges_transmitted == 0):
                 print(f"\nPainting Waterfall on {txfreq}\n")
                 # spectrum_paint.main(current_chal[7] * 1000, fetch_device(dev_available))
-                p = Process(target=spectrum_paint.main, args=(txfreq * 1000, fetch_device(dev_available)))  # , daemon=True)
+                antenna = ""
+                device = fetch_device(dev_available)
+                # bladerf with serial 1c4842b8d80e43438c042dbd752c6640 has a broken TX1 port
+                if(device == "bladerf=1c4842b8d80e43438c042dbd752c6640,biastee=1"):
+                    antenna = "TX2"
+                    print("Set antenna to TX2")
+                else:
+                    print("Antenna set to default empty string. device: {}".format(device))
+
+                p = Process(target=spectrum_paint.main, args=(txfreq * 1000, device, antenna))  # , daemon=True)
                 p.start()
                 p.join()
             print(f"\nStarting {cc_name} on {txfreq}")

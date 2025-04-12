@@ -47,7 +47,7 @@ class russ_test(gr.top_block):
         self.osmosdr_sink_0.set_gain(37, 0)
         self.osmosdr_sink_0.set_if_gain(32, 0)
         self.osmosdr_sink_0.set_bb_gain(32, 0)
-        self.osmosdr_sink_0.set_antenna("", 0)
+        self.osmosdr_sink_0.set_antenna(ant, 0)
         self.osmosdr_sink_0.set_bandwidth(2000000, 0)
 
         self.blocks_vector_source_x_0 = blocks.vector_source_c(ask + [0] * 5321, False, 1, [])
@@ -107,11 +107,12 @@ class russ_test(gr.top_block):
         self.blocks_vector_source_x_0.set_data(self.ask, [])
 
 
-def main(msg, freq, device, top_block_cls=russ_test, options=None):
+def main(msg, freq, device, antenna, top_block_cls=russ_test, options=None):
 
     global center_freq
     global dev
     global ask
+    global ant
 
     # parser = OptionParser(option_class=eng_option, usage="%prog: [options]")
     # parser.add_option("-m", "--msg", dest="msg",
@@ -131,6 +132,7 @@ def main(msg, freq, device, top_block_cls=russ_test, options=None):
     #     exit(-1)
     dev = device
     #msg = ""
+    ant = str(antenna)
 
     ask_code = '0,'
     #for char in options.msg:
