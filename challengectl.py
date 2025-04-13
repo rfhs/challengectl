@@ -202,11 +202,23 @@ class transmitter:
         pocsagopts.pagerfreq = freq
         pocsagopts.capcode = int(modopt1)
         pocsagopts.message = flag
+        antenna = ""
+        if(device.find("bladerf=1c4842b8d80e43438c042dbd752c6640") != -1):
+            antenna = "TX2"
+            print("Set antenna to TX2")
+        else:
+            print("Antenna set to default empty string. device: {}".format(device))
+        pocsagopts.antenna = antenna
         # Call main in pocsagtx_osmocom, passing in pocsagopts options array
         pocsagtx_osmocom.main(options=pocsagopts)
         # pocsag_tx.main(flag, int(modopt1), freq, device)
         print("Finished TX POCSAG, sleeping for 3sec before returning device")
         sleep(3)
+        # Turn off biastee if the device is a bladerf with the biastee enabled
+        if(device.find("bladerf") != -1 and device.find("biastee=1") != -1):
+            bladeserial = parse_bladerf_ser(device)
+            serialarg = '*:serial={}'.format(bladeserial)
+            subprocess.run(['bladeRF-cli', '-d', serialarg, 'set', 'biastee', 'tx', 'off'])
         # print("Slept for 30 seconds")
         device_q.put(device_id)
         # print("Returned Device top pool")

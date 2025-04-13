@@ -30,7 +30,7 @@ import time
 
 class pocsagtx_osmocom(gr.top_block):
 
-    def __init__(self, capcode=1234567, deviceargs="hackrf=0", message="DEF CON 30 HOM3C0MING", pagerfreq=433500000, samp_rate=2400000):
+    def __init__(self, capcode=1234567, deviceargs="hackrf=0", message="DEF CON 30 HOM3C0MING", pagerfreq=433500000, samp_rate=2400000, antenna=""):
         gr.top_block.__init__(self, "Pocsagtx Osmocom")
 
         ##################################################
@@ -66,7 +66,7 @@ class pocsagtx_osmocom(gr.top_block):
         self.osmosdr_sink_0.set_gain(10, 0)
         self.osmosdr_sink_0.set_if_gain(20, 0)
         self.osmosdr_sink_0.set_bb_gain(20, 0)
-        self.osmosdr_sink_0.set_antenna('', 0)
+        self.osmosdr_sink_0.set_antenna(antenna, 0)
         self.osmosdr_sink_0.set_bandwidth(0, 0)
         self.mixalot_pocencode_0 = mixalot.pocencode(1, 512, capcode, message, symrate)
         self.blocks_multiply_const_vxx_0 = blocks.multiply_const_cc(0.7)
@@ -153,13 +153,16 @@ def argument_parser():
     parser.add_argument(
         "-s", "--samp-rate", dest="samp_rate", type=eng_float, default="1.0M",
         help="Set samp_rate [default=%(default)r]")
+    parser.add_argument(
+        "-a", "--antenna", dest="antenna", type=str, default="",
+        help="Set antenna [default=%(default)r]")
     return parser
 
 
 def main(top_block_cls=pocsagtx_osmocom, options=None):
     if options is None:
         options = argument_parser().parse_args()
-    tb = top_block_cls(capcode=options.capcode, deviceargs=options.deviceargs, message=options.message, pagerfreq=options.pagerfreq, samp_rate=options.samp_rate)
+    tb = top_block_cls(capcode=options.capcode, deviceargs=options.deviceargs, message=options.message, pagerfreq=options.pagerfreq, samp_rate=options.samp_rate, antenna=options.antenna)
 
     # def sig_handler(sig=None, frame=None):
     #     tb.stop()
