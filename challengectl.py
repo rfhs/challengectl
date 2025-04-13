@@ -56,7 +56,7 @@ class transmitter:
         mintime = flag_args[4]
         maxtime = flag_args[5]
         antenna = ""
-        if(device == "bladerf=1c4842b8d80e43438c042dbd752c6640,biastee=1"):
+        if(device.find("bladerf=1c4842b8d80e43438c042dbd752c6640") != -1):
             antenna = "TX2"
             print("Set antenna to TX2")
         else:
@@ -83,7 +83,7 @@ class transmitter:
         mintime = flag_args[4]
         maxtime = flag_args[5]
         antenna = ""
-        if(device == "bladerf=1c4842b8d80e43438c042dbd752c6640,biastee=1"):
+        if(device.find("bladerf=1c4842b8d80e43438c042dbd752c6640") != -1):
             antenna = "TX2"
             print("Set antenna to TX2")
         else:
@@ -117,7 +117,7 @@ class transmitter:
         mintime = flag_args[4]
         maxtime = flag_args[5]
         antenna = ""
-        if(device == "bladerf=1c4842b8d80e43438c042dbd752c6640,biastee=1"):
+        if(device.find("bladerf=1c4842b8d80e43438c042dbd752c6640") != -1):
             antenna = "TX2"
             print("Set antenna to TX2")
         else:
@@ -147,7 +147,7 @@ class transmitter:
         mintime = flag_args[4]
         maxtime = flag_args[5]
         antenna = ""
-        if(device == "bladerf=1c4842b8d80e43438c042dbd752c6640,biastee=1"):
+        if(device.find("bladerf=1c4842b8d80e43438c042dbd752c6640") != -1):
             antenna = "TX2"
             print("Set antenna to TX2")
         else:
@@ -395,7 +395,7 @@ def main(options=None):
                 antenna = ""
                 device = fetch_device(dev_available)
                 # bladerf with serial 1c4842b8d80e43438c042dbd752c6640 has a broken TX1 port
-                if(device == "bladerf=1c4842b8d80e43438c042dbd752c6640,biastee=1"):
+                if(device.find("bladerf=1c4842b8d80e43438c042dbd752c6640") != -1):
                     antenna = "TX2"
                     print("Set antenna to TX2")
                 else:
