@@ -78,7 +78,7 @@ class nbfm(gr.top_block):
         self.osmosdr_sink_0.set_gain(rf_gain, 0)
         self.osmosdr_sink_0.set_if_gain(if_gain, 0)
         self.osmosdr_sink_0.set_bb_gain(bb_gain, 0)
-        self.osmosdr_sink_0.set_antenna('', 0)
+        self.osmosdr_sink_0.set_antenna(ant, 0)
         self.osmosdr_sink_0.set_bandwidth(0, 0)
 
         self.blocks_wavfile_source_0 = blocks.wavfile_source(wav_file, False)
@@ -187,17 +187,19 @@ class nbfm(gr.top_block):
         self.osmosdr_sink_0.set_bb_gain(self.bb_gain, 0)
 
 
-def main(wav_src, wav_rate, frequency, device, top_block_cls=nbfm, options=None):
+def main(wav_src, wav_rate, frequency, device, antenna, top_block_cls=nbfm, options=None):
 
     global wav_file
     global wav_samp_rate
     global freq
     global dev
+    global ant
 
     wav_file = wav_src
     wav_samp_rate = wav_rate
     freq = frequency
     dev = device
+    ant = str(antenna)
 
     tb = top_block_cls()
     tb.start()

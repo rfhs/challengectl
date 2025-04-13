@@ -146,9 +146,15 @@ class transmitter:
         freq = int(flag_args[6]) * 1000
         mintime = flag_args[4]
         maxtime = flag_args[5]
+        antenna = ""
+        if(device == "bladerf=1c4842b8d80e43438c042dbd752c6640,biastee=1"):
+            antenna = "TX2"
+            print("Set antenna to TX2")
+        else:
+            print("Antenna set to default empty string. device: {}".format(device))
         # print("I ran fire_nbfm with flag=" + str(wav_src) + " and freq=" +
         # str(freq) + " and wav_rate=" + str(wav_rate))
-        nbfm.main(wav_src, wav_rate, freq, device)
+        nbfm.main(wav_src, wav_rate, freq, device, antenna)
         sleep(3)
         device_q.put(device_id)
         norandsleep = flag_args[8]
