@@ -12,6 +12,7 @@ from multiprocessing import Process, Queue
 import numpy as np
 import string
 import argparse
+import subprocess
 
 from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
 
@@ -64,6 +65,11 @@ class transmitter:
         # print("I ran fire_ask with flag=" + str(flag) + " and freq=" + str(freq))
         ask.main(flag.encode("utf-8").hex(), freq, device, antenna)
         sleep(3)
+        # Turn off biastee if the device is a bladerf with the biastee enabled
+        if(device.find("bladerf") != -1 and device.find("biastee=1") != -1):
+            bladeserial = parse_bladerf_ser(device)
+            serialarg = '*:serial={}'.format(bladeserial)
+            subprocess.run(['bladeRF-cli', '-d', serialarg, 'set', 'biastee', 'tx', 'off'])
         device_q.put(device_id)
         norandsleep = flag_args[8]
         if(norandsleep == False):
@@ -94,6 +100,11 @@ class transmitter:
         p.start()
         p.join()
         sleep(3)
+        # Turn off biastee if the device is a bladerf with the biastee enabled
+        if(device.find("bladerf") != -1 and device.find("biastee=1") != -1):
+            bladeserial = parse_bladerf_ser(device)
+            serialarg = '*:serial={}'.format(bladeserial)
+            subprocess.run(['bladeRF-cli', '-d', serialarg, 'set', 'biastee', 'tx', 'off'])
         device_q.put(device_id)
         norandsleep = flag_args[8]
         if(norandsleep == False):
@@ -126,6 +137,11 @@ class transmitter:
         # str(freq) + " and wav_rate=" + str(wav_rate))
         usb_tx.main(wav_src, wav_rate, freq, device, antenna)
         sleep(3)
+        # Turn off biastee if the device is a bladerf with the biastee enabled
+        if(device.find("bladerf") != -1 and device.find("biastee=1") != -1):
+            bladeserial = parse_bladerf_ser(device)
+            serialarg = '*:serial={}'.format(bladeserial)
+            subprocess.run(['bladeRF-cli', '-d', serialarg, 'set', 'biastee', 'tx', 'off'])
         device_q.put(device_id)
         norandsleep = flag_args[8]
         if(norandsleep == False):
@@ -156,6 +172,11 @@ class transmitter:
         # str(freq) + " and wav_rate=" + str(wav_rate))
         nbfm.main(wav_src, wav_rate, freq, device, antenna)
         sleep(3)
+        # Turn off biastee if the device is a bladerf with the biastee enabled
+        if(device.find("bladerf") != -1 and device.find("biastee=1") != -1):
+            bladeserial = parse_bladerf_ser(device)
+            serialarg = '*:serial={}'.format(bladeserial)
+            subprocess.run(['bladeRF-cli', '-d', serialarg, 'set', 'biastee', 'tx', 'off'])
         device_q.put(device_id)
         norandsleep = flag_args[8]
         if(norandsleep == False):
@@ -239,6 +260,11 @@ class transmitter:
         # Call main in pocsagtx_osmocom, passing in lrsopts options array
         lrs_tx.main(options=lrsopts)
         sleep(3)
+        # Turn off biastee if the device is a bladerf with the biastee enabled
+        if(device.find("bladerf") != -1 and device.find("biastee=1") != -1):
+            bladeserial = parse_bladerf_ser(device)
+            serialarg = '*:serial={}'.format(bladeserial)
+            subprocess.run(['bladeRF-cli', '-d', serialarg, 'set', 'biastee', 'tx', 'off'])
         # Delete pager bin file from /tmp/
         os.remove(outfile)
         print("Removed outfile")
@@ -303,6 +329,14 @@ def fetch_device(dev_id):
     device = c.fetchone()
     conn.close()
     return device[0]
+
+# Parse bladerf serial number from device string
+def parse_bladerf_ser(device):
+    bladerfdevind = device.find("bladerf=")
+    serialstart = bladerfdevind + 8
+    serialend = serialstart + 32
+    bladeserial = device[serialstart:serialend]
+    return bladeserial
 
 def argument_parser():
     parser = argparse.ArgumentParser(description="A script to run SDR challenges on multiple SDR devices.")
@@ -404,6 +438,11 @@ def main(options=None):
                 p = Process(target=spectrum_paint.main, args=(txfreq * 1000, device, antenna))  # , daemon=True)
                 p.start()
                 p.join()
+                # Turn off biastee if the device is a bladerf with the biastee enabled
+                if(device.find("bladerf") != -1 and device.find("biastee=1") != -1):
+                    bladeserial = parse_bladerf_ser(device)
+                    serialarg = '*:serial={}'.format(bladeserial)
+                    subprocess.run(['bladeRF-cli', '-d', serialarg, 'set', 'biastee', 'tx', 'off'])
             print(f"\nStarting {cc_name} on {txfreq}")
             # Create list of challenge module arguments, using txfreq to allow setting random freq here instead of in the challenge module
             replaceinqueue = True
