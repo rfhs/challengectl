@@ -224,6 +224,13 @@ class transmitter:
         lrsopts.deviceargs = device
         lrsopts.freq = freq
         lrsopts.binfile = outfile
+        antenna = ""
+        if(device.find("bladerf=1c4842b8d80e43438c042dbd752c6640") != -1):
+            antenna = "TX2"
+            print("Set antenna to TX2")
+        else:
+            print("Antenna set to default empty string. device: {}".format(device))
+        lrsopts.antenna = antenna
         # Gains below are defaults, added in case they need to be changed
         # lrsopts.bbgain = 20.0
         # lrsopts.ifgain = 20.0

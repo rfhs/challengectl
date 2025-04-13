@@ -24,7 +24,7 @@ import time
 
 class lrs_tx(gr.top_block):
 
-    def __init__(self, bbgain=20, binfile="pager.bin", deviceargs="hackrf", freq=467750000, ifgain=20, rfgain=47):
+    def __init__(self, bbgain=20, binfile="pager.bin", deviceargs="hackrf", freq=467750000, ifgain=20, rfgain=47, antenna=""):
         gr.top_block.__init__(self, "LRS TX")
 
         ##################################################
@@ -55,7 +55,7 @@ class lrs_tx(gr.top_block):
         self.osmosdr_sink_0.set_gain(rfgain, 0)
         self.osmosdr_sink_0.set_if_gain(ifgain, 0)
         self.osmosdr_sink_0.set_bb_gain(bbgain, 0)
-        self.osmosdr_sink_0.set_antenna('', 0)
+        self.osmosdr_sink_0.set_antenna(antenna, 0)
         self.osmosdr_sink_0.set_bandwidth(0, 0)
         self.blocks_repeat_0 = blocks.repeat(gr.sizeof_float*1, 3190)
         self.blocks_file_source_0 = blocks.file_source(gr.sizeof_float*1, binfile, False, 0, 0)
@@ -143,13 +143,16 @@ def argument_parser():
     parser.add_argument(
         "-g", "--rfgain", dest="rfgain", type=eng_float, default="47.0",
         help="Set rfgain [default=%(default)r]")
+    parser.add_argument(
+        "-a", "--antenna", dest="antenna", type=str, default="",
+        help="Set antenna [default=%(default)r]")
     return parser
 
 
 def main(top_block_cls=lrs_tx, options=None):
     if options is None:
         options = argument_parser().parse_args()
-    tb = top_block_cls(bbgain=options.bbgain, binfile=options.binfile, deviceargs=options.deviceargs, freq=options.freq, ifgain=options.ifgain, rfgain=options.rfgain)
+    tb = top_block_cls(bbgain=options.bbgain, binfile=options.binfile, deviceargs=options.deviceargs, freq=options.freq, ifgain=options.ifgain, rfgain=options.rfgain, antenna=options.antenna)
 
     # def sig_handler(sig=None, frame=None):
     #     tb.stop()
