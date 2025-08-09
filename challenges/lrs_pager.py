@@ -142,7 +142,7 @@ def main(options=None):
             print("Not a number")
 
     pager_list = []
-    pager_list = list(map( int, re.split('\s+',pagers)))
+    pager_list = list(map( int, re.split(r'\s+',pagers)))
 
     if(randomkey):
         alert_type = random.choice([1, 10, 4])
