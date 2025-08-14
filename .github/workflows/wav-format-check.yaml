@@ -19,4 +19,4 @@ jobs:
     - name: WAV format check
       run: |
         sudo apt install libimage-exiftool-perl -y
-        ./qa/wav-format-check
+        ./qa/wav-format-check $(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -E '^(flags-archive/)')
