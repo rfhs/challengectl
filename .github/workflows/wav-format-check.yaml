@@ -1,0 +1,22 @@
+name: WAV format check
+
+on:
+  push:
+    paths:
+      - 'flags-archive/**'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: List added files
+      run: git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep -E '^(flags-archive/)'
+    
+    - name: WAV format check
+      run: |
+        sudo apt install libimage-exiftool-perl -y
+        ./qa/wav-format-check
