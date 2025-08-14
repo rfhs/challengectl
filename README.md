@@ -1,3 +1,4 @@
+[![WAV format check](https://github.com/rfhs/challengectl/actions/workflows/wav-format-check.yaml/badge.svg)](https://github.com/rfhs/challengectl/actions/workflows/wav-format-check.yaml)
 # challengectl
 Queues challenges and gr-osmosdr radios to transmit for the RFCTF
 
