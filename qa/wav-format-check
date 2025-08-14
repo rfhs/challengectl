@@ -18,11 +18,18 @@ else
   wav_files="$*"
 fi
 for wav in ${wav_files}; do
-  if [ "${wav##*.}" != "wav" ] || [ ! -f "${wav}" ]; then
+  if [ "${wav##*.}" != "wav" ]; then
+    printf 'Skipping wav format check on non-wav file %s\n' "${wav}"
+    continue
+  fi
+  if [ ! -f "${wav}" ]; then
+    printf 'Skipping %s since we can not find it.\n' "${wav}"
     continue
   fi
   tested="$(exiftool -FilePermissions -FileType -FileTypeExtension -MIMEType -Encoding -NumChannels -SampleRate -BitsPerSample "${wav}")"
-  if [ "${tested}" != "${expected}" ]; then
+  if [ "${tested}" = "${expected}" ]; then
+    printf 'File %s passed wav format check\n' "${wav}"
+  else
     if [ "${once}" = "never" ]; then
       printf 'Expected format for wav files is:\n%s\n' "${expected}"
       once="complete"
