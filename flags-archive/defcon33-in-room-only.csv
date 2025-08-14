@@ -1,0 +1,6 @@
+defcon33,1754586000,1754852400
+0,HAM_DIGITAL_7,flags-archive/defcon33/HD7-RTTY-45-Bouncy.wav,nbfm,48000,,60,90,443925,,
+1,HAM MORSE 5,HAM MORSE 5: LEARN TO COUNT WITH THE RF PENGUIN,cw,55,,60,90,903850,,
+2,SDR_ASK_5,SDR_ASK_5: Come say hi to Schrodinger,ask,,,60,90,ham_900,,
+3,POCSAG_RX2,Ask the owl for more RF tips and tricks.,pocsag,1002025,,60,90,444500,,
+4,POCSAG_TX,Transmit your team name via 1200bps POCSAG to 145.600MHz capcode 2025033 for more points.,pocsag,1332025,,60,90,444500,,
