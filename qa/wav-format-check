@@ -18,7 +18,7 @@ else
   wav_files="$*"
 fi
 for wav in ${wav_files}; do
-  if [ "${wav##*.}" != "wav" ]; then
+  if [ "${wav##*.}" != "wav" ] || [ ! -f "${wav}" ]; then
     continue
   fi
   tested="$(exiftool -FilePermissions -FileType -FileTypeExtension -MIMEType -Encoding -NumChannels -SampleRate -BitsPerSample "${wav}")"
