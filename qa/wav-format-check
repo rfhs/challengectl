@@ -1,0 +1,21 @@
+#!/bin/bash
+
+expected="File Permissions                : -rw-r--r--
+File Type                       : WAV
+File Type Extension             : wav
+MIME Type                       : audio/x-wav
+Encoding                        : Microsoft PCM
+Num Channels                    : 1
+Sample Rate                     : 48000
+Bits Per Sample                 : 16"
+
+for wav in $(find flags-archive -name '*.wav'); do
+  tested="$(exiftool -FilePermissions -FileType -FileTypeExtension -MIMEType -Encoding -NumChannels -SampleRate -BitsPerSample "${wav}")"
+  if [ "${tested}" != "${expected}" ]; then
+    printf 'File %s is not in the expected format\n' "${wav}"
+    printf 'Should be:\n %s\n' "${expected}"
+    printf 'But %s is:\n %s\n' "${wav}" "${tested}"
+    #exit 1
+  fi
+done
+
