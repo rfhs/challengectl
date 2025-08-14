@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -x "$(command -v exiftool 2>&1)" ]; then
+if [ ! -x "$(command -v exiftool 2>&1)" ]; then
   printf 'Please install exiftool\n'
   exit 1
 fi
