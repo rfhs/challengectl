@@ -1,5 +1,13 @@
 #!/bin/bash
 
+if [ -x "$(command -v exiftool 2>&1)" ]; then
+  printf 'Please install exiftool\n'
+  exit 1
+fi
+
+once="never"
+exit_code="0"
+
 expected="File Permissions                : -rw-r--r--
 File Type                       : WAV
 File Type Extension             : wav
@@ -9,13 +17,30 @@ Num Channels                    : 1
 Sample Rate                     : 48000
 Bits Per Sample                 : 16"
 
-for wav in $(find flags-archive -name '*.wav'); do
+if [ $# -eq 0 ]; then
+  wav_files="$(find flags-archive -name '*.wav')"
+else
+  wav_files="$*"
+fi
+for wav in ${wav_files}; do
+  if [ "${wav##*.}" != "wav" ]; then
+    printf 'Skipping wav format check on non-wav file %s\n' "${wav}"
+    continue
+  fi
+  if [ ! -f "${wav}" ]; then
+    printf 'Skipping %s since we can not find it.\n' "${wav}"
+    continue
+  fi
   tested="$(exiftool -FilePermissions -FileType -FileTypeExtension -MIMEType -Encoding -NumChannels -SampleRate -BitsPerSample "${wav}")"
-  if [ "${tested}" != "${expected}" ]; then
-    printf 'File %s is not in the expected format\n' "${wav}"
-    printf 'Should be:\n %s\n' "${expected}"
-    printf 'But %s is:\n %s\n' "${wav}" "${tested}"
-    #exit 1
+  if [ "${tested}" = "${expected}" ]; then
+    printf 'File %s passed wav format check\n' "${wav}"
+  else
+    if [ "${once}" = "never" ]; then
+      printf 'Expected format for wav files is:\n%s\n' "${expected}"
+      once="complete"
+    fi
+    printf 'File %s is not in the expected format:\n%s\n' "${wav}" "${tested}"
+    exit_code=1
   fi
 done
-
+exit "${exit_code}"
