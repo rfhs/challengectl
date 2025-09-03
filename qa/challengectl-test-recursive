@@ -1,0 +1,13 @@
+#!/bin/sh
+exit_code="0"
+for conference in flags-archive/*.csv; do
+  printf 'Testing %s...' "${conference}"
+  if errors=$(./challengectl.py --test --flagfile "${conference}" --devicefile devices.txt.ci 2>&1); then
+    printf 'PASSED\n'
+  else
+    printf 'FAILED\n'
+    printf '\n%s\n\n' "${errors}"
+    exit_code="1"
+  fi
+done
+exit "${exit_code}"
