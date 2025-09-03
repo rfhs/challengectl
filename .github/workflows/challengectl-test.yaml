@@ -2,8 +2,6 @@ name: Challengectl test
 
 on:
   push:
-    paths:
-      - 'flags-archive/**'
 
 jobs:
   challengectl-test:
