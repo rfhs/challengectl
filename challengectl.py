@@ -280,7 +280,7 @@ class AvoidFreq():
         channel_range = AvoidFreq.channel_to_range(center_freq, bandwidth)
         lower_freq = channel_range[0]
         upper_freq = channel_range[1]
-        return AvoidFreq.is_freq_range(lower_freq, upper_freq)
+        return self.is_freq_range_ok(lower_freq, upper_freq)
 
     def get_center_freq(self):
         """Returns the center frequency of an AvoidFreq object."""
