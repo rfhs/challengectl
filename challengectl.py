@@ -358,6 +358,22 @@ def select_freq(band):
                 freq = randint(int(row[1]), int(row[2]))
                 return((freq, row[1], row[2]))
 
+def get_challenge_bandwidth(challengetype):
+    """Returns the bandwidth for a given challenge type."""
+    if(challengetype == "cw"):
+        return 100
+    elif(challengetype == "nbfm"):
+        return 10000
+    elif(challengetype == "usb"):
+        return 2700
+    elif(challengetype == "pocsag"):
+        return 9000
+    elif(challengetype == "lrs"):
+        return 12500
+    else:
+        print("WARNING: Default case reached in get_challenge_bandwidth.")
+        return 10000
+
 def select_dvbt(channel):
     with open("dvbt_channels.txt") as f:
         reader = csv.reader(f)
@@ -534,19 +550,32 @@ def main(options=None):
             else:
                 print("WARNING: Skipped spectrum paint due to Avoid Frequency conflict.")
 
-            print(f"\nStarting {cc_name} on {txfreq}")
-            # Create list of challenge module arguments, using txfreq to allow setting random freq here instead of in the challenge module
-            replaceinqueue = True
-            norandsleep = False
-            if(test):
-                replaceinqueue = False
-                norandsleep = True
-            challengeargs = [cc_id, cc_flag, cc_modopt1, cc_modopt2, cc_minwait, cc_maxwait, txfreq, replaceinqueue, norandsleep]
-            p = Process(target=getattr(t, "fire_" + cc_module), args=(dev_available, flag_Q, device_Q, challengeargs))
-            p.start()
-            if(test == True):
-                jobs.append(p)
-            challenges_transmitted += 1
+            challenge_bandwidth = get_challenge_bandwidth(cc_module)
+            challenge_channel_center = txfreq_hz
+            if(cc_module == "usb"):
+                # For the USB flowgraph, the tx freq is not the center of the channel.
+                # Calculate where the center of the transmission will be, and use that to check the AvoidFreq ranges.
+                challenge_channel_center = txfreq_hz + int(challenge_bandwidth / 2)
+            else:
+                challenge_channel_center = txfreq_hz
+            isChallengeFreqOk = AvoidFreq.check_channel_avoid_freqs(avoidFreqs, challenge_channel_center, challenge_bandwidth)
+
+            if(isChallengeFreqOk == True):
+                print(f"\nStarting {cc_name} on {txfreq}")
+                # Create list of challenge module arguments, using txfreq to allow setting random freq here instead of in the challenge module
+                replaceinqueue = True
+                norandsleep = False
+                if(test):
+                    replaceinqueue = False
+                    norandsleep = True
+                challengeargs = [cc_id, cc_flag, cc_modopt1, cc_modopt2, cc_minwait, cc_maxwait, txfreq, replaceinqueue, norandsleep]
+                p = Process(target=getattr(t, "fire_" + cc_module), args=(dev_available, flag_Q, device_Q, challengeargs))
+                p.start()
+                if(test == True):
+                    jobs.append(p)
+                challenges_transmitted += 1
+            else:
+                print("WARNING: Challenge skipped due to Avoid Frequency conflict.")
             # #we need a way to know if p.start errored or not
             # os.system("echo " + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
             # os.system('''timeout 15 ssh -F /root/wctf/liludallasmultipass/ssh/config -oStrictHostKeyChecking=no -oConnectTimeout=10 -oPasswordAuthentication=no -n scoreboard echo ''' + freq_or_range + " > /run/shm/wctf_status/" + current_chal[8] + "_sdr")
