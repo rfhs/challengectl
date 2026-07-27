@@ -265,8 +265,14 @@ class AvoidFreq():
         is_below_range = lower_freq < self.lower_avoid_freq and upper_freq < self.lower_avoid_freq
         is_above_range = lower_freq > self.upper_avoid_freq and upper_freq > self.upper_avoid_freq
 
+        # Check if the requested range fully encompasses the AvoidFreq range
+        covers_entire_range = lower_freq <= self.lower_avoid_freq and upper_freq >= self.upper_avoid_freq
+
         # If either frequency is in the avoid range, return False
         if(is_lower_freq_in_range == True or is_upper_freq_in_range == True):
+            return False
+        elif(covers_entire_range == True):
+            # Return false if the requested range covers the entire AvoidFreq range.
             return False
         elif(is_below_range == True or is_above_range == True):
             # Return True if the requested range is entirely below or above the AvoidFreq range
@@ -329,6 +335,17 @@ class AvoidFreq():
                 print("Invalid Avoid Type: {}".format(avoidtype))
 
         return avoid_freqs
+
+    def check_channel_avoid_freqs(avoidFreqs, center_freq, bandwidth):
+        """Checks a channel against a list of AvoidFreq objects. Returns True if the channel does not conflict with the AvoidFreq ranges."""
+        isFreqOk = True
+        for avoid in avoidFreqs:
+            isFreqOk = avoid.is_channel_ok(center_freq, bandwidth)
+            if(isFreqOk != True):
+                print("txfreq: {}, bandwidth: {}, AvoidFreq: {}, isok: {}".format(center_freq, bandwidth, avoid.name, isFreqOk))
+                return False
+        return isFreqOk
+
 
 def select_freq(band):
     """Read from frequencies text file, select row that starts with band argument.
@@ -496,16 +513,27 @@ def main(options=None):
                 txfreq = freq_range[0]
                 freq_or_range = str(freq_range[1]) + "-" + str(freq_range[2])
 
-            # Paint waterfall every time during the CTF, or only once when testing
-            if(test != True or challenges_transmitted == 0):
-                print(f"\nPainting Waterfall on {txfreq}\n")
-                # spectrum_paint.main(current_chal[7] * 1000, fetch_device(dev_available))
-                antenna = get_antenna_port(dev_available)
+            # Convert transmit frequency from kHz to Hz
+            txfreq_hz = txfreq * 1000
+            # Default spectrum paint bandwidth is 2 MHz
+            spectrum_paint_bandwidth = 2000000
 
-                p = Process(target=spectrum_paint.main, args=(txfreq * 1000, dev_available, antenna))  # , daemon=True)
-                p.start()
-                p.join()
-                disable_amp(dev_available)
+            isFreqOk = AvoidFreq.check_channel_avoid_freqs(avoidFreqs, txfreq_hz, spectrum_paint_bandwidth)
+            # Only spectrum paint if the spectrum paint avoids all AvoidFreq ranges
+            if(isFreqOk == True):
+                # Paint waterfall every time during the CTF, or only once when testing
+                if(test != True or challenges_transmitted == 0):
+                    print(f"\nPainting Waterfall on {txfreq}\n")
+                    # spectrum_paint.main(current_chal[7] * 1000, fetch_device(dev_available))
+                    antenna = get_antenna_port(dev_available)
+
+                    p = Process(target=spectrum_paint.main, args=(txfreq * 1000, dev_available, antenna))  # , daemon=True)
+                    p.start()
+                    p.join()
+                    disable_amp(dev_available)
+            else:
+                print("WARNING: Skipped spectrum paint due to Avoid Frequency conflict.")
+
             print(f"\nStarting {cc_name} on {txfreq}")
             # Create list of challenge module arguments, using txfreq to allow setting random freq here instead of in the challenge module
             replaceinqueue = True
