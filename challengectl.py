@@ -13,6 +13,8 @@ import numpy as np
 import string
 import argparse
 import subprocess
+import math
+import json
 
 from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
 
@@ -232,6 +234,101 @@ class transmitter:
             flag_q.put(flag_args[0])
         print("Returned flag to pool")
 
+class AvoidFreq():
+    """Defines a frequency range to avoid."""
+
+    def __init__(self, name, lower_freq, upper_freq):
+        self.name = name
+        if(lower_freq == upper_freq):
+            # Error, frequencies must be different
+            print("Error: lower and upper frequencies for avoid freq must be different")
+
+        if(lower_freq > upper_freq):
+            # Reverse the lower and upper freqs if they were entered in reverse order
+            self.lower_avoid_freq = upper_freq
+            self.upper_avoid_freq = lower_freq
+        else:
+            self.lower_avoid_freq = lower_freq
+            self.upper_avoid_freq = upper_freq
+
+    def __str__(self):
+        return "Name: {}, {}-{}, Center: {}, Bandwidth: {}".format(self.name, self.lower_avoid_freq, self.upper_avoid_freq, self.get_center_freq(), self.get_bandwidth())
+
+    def is_freq_range_ok(self, lower_freq, upper_freq):
+        """Checks if a frequency range avoids the lower and upper bounds of this AvoidFreq object."""
+
+        # Check if either the lower or upper frequencies of the range are within the AvoidFreq range.
+        is_lower_freq_in_range = self.lower_avoid_freq <= lower_freq <= self.upper_avoid_freq
+        is_upper_freq_in_range = self.lower_avoid_freq <= upper_freq <= self.upper_avoid_freq
+
+        # Check if the lower and upper frequencies are both below or above the AvoidFreq range.
+        is_below_range = lower_freq < self.lower_avoid_freq and upper_freq < self.lower_avoid_freq
+        is_above_range = lower_freq > self.upper_avoid_freq and upper_freq > self.upper_avoid_freq
+
+        # If either frequency is in the avoid range, return False
+        if(is_lower_freq_in_range == True or is_upper_freq_in_range == True):
+            return False
+        elif(is_below_range == True or is_above_range == True):
+            # Return True if the requested range is entirely below or above the AvoidFreq range
+            return True
+        else:
+            # Default return False to block the requested frequency range.
+            print("WARNING: Default AvoidFreq Block: {}-{}".format(lower_freq, upper_freq))
+            return False
+
+    def is_channel_ok(self, center_freq, bandwidth):
+        channel_range = AvoidFreq.channel_to_range(center_freq, bandwidth)
+        lower_freq = channel_range[0]
+        upper_freq = channel_range[1]
+        return AvoidFreq.is_freq_range(lower_freq, upper_freq)
+
+    def get_center_freq(self):
+        """Returns the center frequency of an AvoidFreq object."""
+        return ((self.lower_avoid_freq + self.upper_avoid_freq) / 2)
+
+    def get_bandwidth(self):
+        """Returns the bandwidth of an AvoidFreq object."""
+        return (self.upper_avoid_freq - self.lower_avoid_freq)
+
+    def channel_to_range(center_freq, bandwidth):
+        """Converts a channel with a center frequency and bandwidth to a tuple representing the frequency range."""
+        lower_freq = center_freq - math.ceil(bandwidth / 2)
+        upper_freq = center_freq + math.ceil(bandwidth / 2)
+        return (lower_freq, upper_freq)
+
+    def read_avoid_freqs(avoid_freqs_file):
+        """Read file with frequencies to avoid, specified either with channels with a center frequency and bandwidth, or a start and stop frequency range."""
+        avoid_freqs = []
+        # Read and parse the avoid frequencies file
+        with open(avoid_freqs_file) as a:
+            avoid_freq_list = []
+            raw_avoid_freqs = a.readlines()
+            for line in raw_avoid_freqs:
+                avoid_freq_list.append(json.loads(line))
+
+        # Create an AvoidFreq object for each item in the file.
+        for avoidfreqitem in avoid_freq_list:
+            name = avoidfreqitem['name']
+            avoidtype = avoidfreqitem['type']
+            # Channels are defined by a center frequency and a bandwidth
+            if(avoidtype == "channel"):
+                avoidcenterfreq = avoidfreqitem['center']
+                avoidbandwidth = avoidfreqitem['bandwidth']
+                avoidRange = AvoidFreq.channel_to_range(avoidcenterfreq, avoidbandwidth)
+                avoidlowerfreq = avoidRange[0]
+                avoidupperfreq = avoidRange[1]
+                avoidItem = AvoidFreq(name, avoidlowerfreq, avoidupperfreq)
+                avoid_freqs.append(avoidItem)
+            # Ranges are defined by a lower frequency and an upper frequency.
+            elif(avoidtype == "range"):
+                avoidlowerfreq = avoidfreqitem['lower_freq']
+                avoidupperfreq = avoidfreqitem['upper_freq']
+                avoidItem = AvoidFreq(name, avoidlowerfreq, avoidupperfreq)
+                avoid_freqs.append(avoidItem)
+            else:
+                print("Invalid Avoid Type: {}".format(avoidtype))
+
+        return avoid_freqs
 
 def select_freq(band):
     """Read from frequencies text file, select row that starts with band argument.
@@ -310,6 +407,7 @@ def argument_parser():
     parser = argparse.ArgumentParser(description="A script to run SDR challenges on multiple SDR devices.")
     parser.add_argument("-f", '--flagfile', help="Flags file")
     parser.add_argument("-d", '--devicefile', help="Devices file")
+    parser.add_argument("-a", '--avoidfreqsfile', help="Avoid Frequencies file")
     parser.add_argument("-v", "--verbose", action="store_true")
     parser.add_argument("-t", "--test", help="Run each challenge once to test flags.", action="store_true")
     return parser
@@ -322,8 +420,15 @@ def main(options=None):
     args = options
     flagfile = args.flagfile
     devicefile = args.devicefile
+    avoidfreqsfile = args.avoidfreqsfile
     verbose = args.verbose
     test = args.test
+
+    # Read and parse the Avoid Frequencies file
+    avoidFreqs = []
+    if(avoidfreqsfile is not None):
+        avoidFreqs = AvoidFreq.read_avoid_freqs(avoidfreqsfile)
+
     global conference
     # Create thread safe FIFO queues for devices and flags
     device_Q = Queue()
