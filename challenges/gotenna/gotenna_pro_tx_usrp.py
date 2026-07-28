@@ -304,14 +304,14 @@ def main(top_block_cls=gotenna_pro_tx_usrp, options=None):
         options = argument_parser().parse_args()
     tb = top_block_cls(baud_rate=options.baud_rate, callsign=options.callsign, counter_num=options.counter_num, device_addr=options.device_addr, frequency=options.frequency, message=options.message, message_type=options.message_type, publickey_data=options.publickey_data, recipient_gid=options.recipient_gid, sender_gid=options.sender_gid)
 
-    def sig_handler(sig=None, frame=None):
-        tb.stop()
-        tb.wait()
+    #def sig_handler(sig=None, frame=None):
+    #    tb.stop()
+    #    tb.wait()
 
-        sys.exit(0)
+    #    sys.exit(0)
 
-    signal.signal(signal.SIGINT, sig_handler)
-    signal.signal(signal.SIGTERM, sig_handler)
+    #signal.signal(signal.SIGINT, sig_handler)
+    #signal.signal(signal.SIGTERM, sig_handler)
 
     tb.start()
 
