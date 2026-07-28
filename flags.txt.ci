@@ -5,3 +5,4 @@ testflagsfile,1660312800,1660496400
 3,SDR_ASK_1,The Silence of the Lambs was filmed in Pittsburgh Pennsylvania.,ask,,,60,90,ham_440,,
 4,POCSAG_RX,The Clock That Went Backward,pocsag,198468,,60,90,444500,,
 5,LRS_RX,-s 20 -p 238 -pf 1,lrs,,,60,90,467750,,
+6,GOTENNA_PRO,RFCTF{gotenna_pro_test},gotenna_pro,"--callsign RFCTF --sender-gid 1234567890 --recipient-gid 1234567891 --baud-rate 9600 --message-type BROADCAST --counter-num 0",,60,90,450000,,
