@@ -17,6 +17,7 @@ import math
 import json
 
 from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
+from challenges.gotenna import gotenna_pro_tx_bladerf, gotenna_pro_tx_usrp
 
 def build_database(flagfile, devicefile):
     """Create sqlite database based on flags file and devices file. Database file name will be based on
@@ -234,6 +235,50 @@ class transmitter:
             flag_q.put(flag_args[0])
         print("Returned flag to pool")
 
+    def fire_gotenna_pro(self, device_string, flag_q, device_q, *flag_args):
+        print("\nTransmitting goTenna Pro\n")
+        flag_args = flag_args[0]
+        flag = flag_args[1]
+        modopts = flag_args[2]
+        mintime = flag_args[4]
+        maxtime = flag_args[5]
+        freq = int(flag_args[6]) * 1000
+        norandsleep = flag_args[8]
+
+        devargs = [arg.strip() for arg in device_string.split(",") if arg.strip() != ""]
+        devtypes = [arg.lower() for arg in devargs]
+        gotenna_module = None
+        if("uhd" in devtypes):
+            gotenna_module = gotenna_pro_tx_usrp
+            gotennaopts = gotenna_module.argument_parser().parse_args(modopts.split())
+            gotennaopts.device_addr = ",".join([arg for arg in devargs if arg.lower() != "uhd"])
+        elif(any(devtype.startswith("hackrf") for devtype in devtypes)):
+            print("goTenna Pro is not supported on HackRF, skipping device {}".format(device_string))
+        elif(any(devtype.startswith("bladerf") for devtype in devtypes)):
+            gotenna_module = gotenna_pro_tx_bladerf
+            gotennaopts = gotenna_module.argument_parser().parse_args(modopts.split())
+            gotennaopts.device_args = device_string
+            antenna = get_antenna_port(device_string)
+            if(antenna != ""):
+                gotennaopts.antenna = antenna
+        else:
+            print("goTenna Pro is not supported on device {}, skipping".format(device_string))
+
+        if(gotenna_module != None):
+            gotennaopts.message = flag
+            gotennaopts.frequency = freq
+
+            gotenna_module.main(options=gotennaopts)
+            sleep(3)
+        disable_amp(device_string)
+        device_q.put(device_string)
+
+        if(norandsleep == False):
+            sleep(randint(mintime, maxtime))
+        replaceinqueue = flag_args[7]
+        if(replaceinqueue != False):
+            flag_q.put(flag_args[0])
+
 class AvoidFreq():
     """Defines a frequency range to avoid."""
 
@@ -345,7 +390,6 @@ class AvoidFreq():
                 print("txfreq: {}, bandwidth: {}, AvoidFreq: {}, isok: {}".format(center_freq, bandwidth, avoid.name, isFreqOk))
                 return False
         return isFreqOk
-
 
 def select_freq(band):
     """Read from frequencies text file, select row that starts with band argument.
