@@ -410,12 +410,16 @@ def get_challenge_bandwidth(challengetype):
         return 10000
     elif(challengetype == "usb"):
         return 2700
+    elif(challengetype == "ask"):
+        return 600
     elif(challengetype == "pocsag"):
         return 9000
     elif(challengetype == "lrs"):
         return 12500
+    elif(challengetype == "gotenna_pro"):
+        return 25000
     else:
-        print("WARNING: Default case reached in get_challenge_bandwidth.")
+        print("WARNING: Default case reached in get_challenge_bandwidth. challengetype: {}".format(challengetype))
         return 10000
 
 def select_dvbt(channel):
