@@ -17,7 +17,7 @@ import math
 import json
 
 from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
-from challenges.gotenna import gotenna_pro_tx_bladerf, gotenna_pro_tx_usrp
+from challenges.gotenna import gotenna_pro_tx_bladerf
 
 def build_database(flagfile, devicefile):
     """Create sqlite database based on flags file and devices file. Database file name will be based on
@@ -245,31 +245,18 @@ class transmitter:
         freq = int(flag_args[6]) * 1000
         norandsleep = flag_args[8]
 
-        devargs = [arg.strip() for arg in device_string.split(",") if arg.strip() != ""]
-        devtypes = [arg.lower() for arg in devargs]
-        gotenna_module = None
-        if("uhd" in devtypes):
-            gotenna_module = gotenna_pro_tx_usrp
-            gotennaopts = gotenna_module.argument_parser().parse_args(modopts.split())
-            gotennaopts.device_addr = ",".join([arg for arg in devargs if arg.lower() != "uhd"])
-        elif(any(devtype.startswith("hackrf") for devtype in devtypes)):
-            print("goTenna Pro is not supported on HackRF, skipping device {}".format(device_string))
-        elif(any(devtype.startswith("bladerf") for devtype in devtypes)):
-            gotenna_module = gotenna_pro_tx_bladerf
-            gotennaopts = gotenna_module.argument_parser().parse_args(modopts.split())
-            gotennaopts.device_args = device_string
-            antenna = get_antenna_port(device_string)
-            if(antenna != ""):
-                gotennaopts.antenna = antenna
-        else:
-            print("goTenna Pro is not supported on device {}, skipping".format(device_string))
+        # Use the bladerf flowgraph for all devices
+        gotenna_module = gotenna_pro_tx_bladerf
+        # Configure options specific to the gotenna module
+        gotennaopts = gotenna_module.argument_parser().parse_args(modopts.split())
+        gotennaopts.device_args = device_string
+        gotennaopts.antenna = get_antenna_port(device_string)
+        gotennaopts.message = flag
+        gotennaopts.frequency = freq
 
-        if(gotenna_module != None):
-            gotennaopts.message = flag
-            gotennaopts.frequency = freq
-
-            gotenna_module.main(options=gotennaopts)
-            sleep(3)
+        # Call main() in the gotenna module, passing in the options configured above.
+        gotenna_module.main(options=gotennaopts)
+        sleep(3)
         disable_amp(device_string)
         device_q.put(device_string)
 
