@@ -256,9 +256,7 @@ class transmitter:
             gotenna_module = gotenna_pro_tx_bladerf
             gotennaopts = gotenna_module.argument_parser().parse_args(modopts.split())
             gotennaopts.device_args = device_string
-            antenna = get_antenna_port(device_string)
-            if(antenna != ""):
-                gotennaopts.antenna = antenna
+            gotennaopts.antenna = get_antenna_port(device_string)
         else:
             print("goTenna Pro is not supported on device {}, skipping".format(device_string))
 
