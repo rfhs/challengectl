@@ -1,0 +1,4 @@
+{"name": "2M FM Simplex", "type": "channel", "center": 146520000, "bandwidth": 10000}
+{"name": "70CM FM Simplex", "type": "channel", "center": 446000000, "bandwidth": 10000}
+{"name": "2M SSB Calling", "type": "range", "lower_freq": 144200000, "upper_freq": 144203000}
+{"name": "70CM SSB Calling", "type": "range", "lower_freq": 432100000, "upper_freq": 432103000}

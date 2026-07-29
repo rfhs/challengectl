@@ -35,6 +35,20 @@ dev_id,osmosdr_device_string
 
 **TX Antenna Ports:** challengectl will transmit by default from the default transmit port on your SDR device, the only port if your SDR only has one transmit port, TX1 on bladeRF 2.0 Micro, TX/RX on a USRP B200 - whichever port is selected by an empty string passed to the antenna parameter for the Osmocom GNU Radio Sink. If you would like to transmit from a different port than the default, you will need to update the `get_antenna_port` function in challengectl.py to select a different port for the device. There is an example in that function, selecting TX2 for one of the RFHS bladeRF devices with a physically broken TX1 port. Setting transmit ports via configuration files will likely be in a future iteration of challengectl, but for now changing the transmit port requires updating the code.
 
+## Avoid Frequencies File
+The avoid frequencies file is a new line delimited JSON file, with each line containing one JSON object with a frequency range or channel to avoid. The purpose of defining frequency ranges or channels in this file, and passing the file into `challengectl.py` with the `-a` flag is to prevent challengectl from transmitting in frequency ranges that you would like to avoid transmitting on. These frequencies could be avoided by selecting a different frequency in the flags file, but using the avoid frequencies file will also prevent transmitting on these channels when you are using a frequency range, such as ham_440 for a challenge in the flags file.
+
+Avoid frequencies are defined as either channels or frequency ranges. Channels have a center frequency and a bandwidth, both specified in Hz. Frequency ranges have a lower frequency, and an upper frequency, also specified in Hz.
+
+The `avoidfreqs.txt.example` file has examples of both channels and ranges. To avoid a channel, such as the Amateur Radio 2M FM Simplex channel, add a line to your avoid frequencies file like this:
+```
+{"name": "2M FM Simplex", "type": "channel", "center": 146520000, "bandwidth": 10000}
+```
+In the examples file, there are also examples of ranges, such as the Amateur Radio 2M SSB Calling frequency. The SSB frequencies to avoid are defined as ranges because it may be easier to think of the SSB frequencies using the dial frequency as the lower frequency (for USB) and adding the bandwith to the dial frequency to get the upper frequency of the range to avoid. An example of a frequency range to avoid in the avoid frequencies file is below:
+```
+{"name": "2M SSB Calling", "type": "range", "lower_freq": 144200000, "upper_freq": 144203000}
+```
+
 ### Supported Devices
 Any transmit capable device that can be used to transmit using a GNURadio gr-osmosdr sink *should* work, however only the following devices have been tested so far.
 - [Nuand bladeRF 2.0](https://www.nuand.com/bladerf-2-0-micro/)
