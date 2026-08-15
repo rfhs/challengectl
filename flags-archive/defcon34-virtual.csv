@@ -1,0 +1,17 @@
+0,HAM_DIGITAL_1,flags-archive/defcon34/virtual/VIRTUAL-HD1-keymaster-MT63-1KL.wav,usb_tx,48000,0
+1,HAM_DIGITAL_2,flags-archive/defcon34/virtual/VIRTUAL-HD2-SKYLINE-RTTY.wav,nbfm_tx,48000,0
+2,HAM_DIGITAL_3,flags-archive/defcon34/virtual/VIRTUAL-HD3-reality-OLIVIA-4-250.wav,nbfm_tx,48000,0
+3,HAM_DIGITAL_4,flags-archive/defcon34/virtual/VIRTUAL-HD4-looking-BPSK1000.wav,usb_tx,48000,0
+4,HAM_DIGITAL_5,flags-archive/defcon34/virtual/VIRTUAL-HD5-22nm-THOR32.wav,usb_tx,48000,0
+5,HAM_DIGITAL_6,flags-archive/defcon34/virtual/VIRTUAL-HD6-WONKY-FELDHELL.wav,usb_tx,48000,0
+6,HAM_MORSE_1,VIRTUAL HAM MORSE 1: GET LICENSED WITH A VIRTUAL HAM EXAM,cw,35,0
+7,HAM_MORSE_2,VIRTUAL HAM MORSE 2: OPEN SOURCE CRYPTO WALLET?,cw,45,0
+8,HAM_MORSE_3,VIRTUAL HAM MORSE 3: MULTI-MODAL COMMUNICATION WITH MORSE CODE,cw,55,0
+9,HAM_MORSE_4,VIRTUAL HAM MORSE 4: TSMC 22NM FAB PROPRIETARY BITS,cw,65,0
+10,SDR_ASK_1,VIRTUAL SDR_ASK_1: There is no firewall in the physical game,ask,,0
+11,SDR_ASK_2,VIRTUAL SDR_ASK_2: The net is just another medium through which our signals flow,ask,,0
+12,SDR_ASK_3,VIRTUAL SDR_ASK_3: Tracing the signal through the rain soaked alley,ask,,0
+13,SDR_ASK_4,VIRTUAL SDR_ASK_4: Amplitude shift keying through the flicker of the neon glow,ask,,0
+14,LRS_PAGER,-s 13 -p 624 -pf 4,lrs,,0
+15,POCSAG_1,The RFCTF underground has a message for you.,pocsag,1263426,0
+16,HAM_SSTV_1,flags-archive/defcon34/virtual/VIRTUAL-SSTV-trapped.wav,usb_tx,48000,0
