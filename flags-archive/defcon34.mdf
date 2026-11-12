@@ -1,0 +1,297 @@
+//fldigi macro definition file extended
+// This file defines the macro structure(s) for the digital modem program, fldigi
+// It also serves as a basis for any macros that are written by the user
+//
+// The top line of this file should always be the first line in every macro 
+// definition file (.mdf) for the fldigi program to recognize it as such.
+//
+
+//
+// Macro # 1
+/$ 0 HD1 MT63-1KL @>|
+<MODEM:MT63-1KL><GOFREQ:1500><TX>\n
+HAM_DIGITAL_1: Infectious digital signals in the air\n
+HAM_DIGITAL_1: Infectious digital signals in the air\n
+HAM_DIGITAL_1: Infectious digital signals in the air\n
+<RX>
+
+//
+// Macro # 2
+/$ 1 HD2 RTTY-45 @>|
+<MODEM:RTTY><GOFREQ:1000><TX>\n
+HAM_DIGITAL_2: NEON RAIN MAKES THIS WATERFALL GLOW\n
+HAM_DIGITAL_2: NEON RAIN MAKES THIS WATERFALL GLOW\n
+HAM_DIGITAL_2: NEON RAIN MAKES THIS WATERFALL GLOW\n
+<RX>
+
+//
+// Macro # 3
+/$ 2 HD3 OLIVIA-4/250 @>|
+<MODEM:OLIVIA-4/250><GOFREQ:2000><TX>\n
+HAM_DIGITAL_3: Through the shadows and into the silicon\n
+HAM_DIGITAL_3: Through the shadows and into the silicon\n
+HAM_DIGITAL_3: Through the shadows and into the silicon\n
+<RX>
+
+//
+// Macro # 4
+/$ 3 HD4 BPSK1000 @>|
+<MODEM:BPSK1000><GOFREQ:1200><TX>\n
+HAM_DIGITAL_4: The Rebels vanish undetected by the Empire\n
+HAM_DIGITAL_4: The Rebels vanish undetected by the Empire\n
+HAM_DIGITAL_4: The Rebels vanish undetected by the Empire\n
+<RX>
+
+//
+// Macro # 5
+/$ 4 HD5 THOR32  @>|
+<MODEM:THOR32><GOFREQ:750><TX>\n
+HAM_DIGITAL_5: The ghost in the wireless emerges through the static\n
+HAM_DIGITAL_5: The ghost in the wireless emerges through the static\n
+HAM_DIGITAL_5: The ghost in the wireless emerges through the static\n
+<RX>
+
+//
+// Macro # 6
+/$ 5 HD6 FELDHELL @>|
+<MODEM:FELDHELL><GOFREQ:1400><TX>\n
+HAM_DIGITAL_6: WHAT IN THE HELLSCHREIBER IS THIS NOISE\n
+HAM_DIGITAL_6: WHAT IN THE HELLSCHREIBER IS THIS NOISE\n
+HAM_DIGITAL_6: WHAT IN THE HELLSCHREIBER IS THIS NOISE\n
+<RX>
+
+//
+// Macro # 7
+/$ 6 
+
+
+//
+// Macro # 8
+/$ 7 
+
+
+//
+// Macro # 9
+/$ 8 T/R
+<TX/RX>
+
+//
+// Macro # 10
+/$ 9 Tx @>>
+<TX>
+
+//
+// Macro # 11
+/$ 10 Rx @||
+<RX>
+
+//
+// Macro # 12
+/$ 11 TX @>|
+<TX>\n
+de <MYCALL> k\n
+<RX>
+
+//
+// Macro # 13
+/$ 12 HD1 RX
+<MODEM:MT63-1KL><GOFREQ:1500><RX>
+
+//
+// Macro # 14
+/$ 13 HD2 RX
+<MODEM:RTTY><GOFREQ:1000><RX>
+
+//
+// Macro # 15
+/$ 14 HD3 RX
+<MODEM:OLIVIA-4/250><GOFREQ:2000><RX>
+
+//
+// Macro # 16
+/$ 15 HD4 RX
+<MODEM:BPSK1000><GOFREQ:1200><RX>
+
+//
+// Macro # 17
+/$ 16 HD5 RX
+<MODEM:THOR32><GOFREQ:750><RX>
+
+//
+// Macro # 18
+/$ 17 HD6 RX
+<MODEM:FELDHELL><GOFREQ:1400><RX>
+
+//
+// Macro # 19
+/$ 18 
+
+
+//
+// Macro # 20
+/$ 19 
+
+
+//
+// Macro # 21
+/$ 20 
+
+
+//
+// Macro # 22
+/$ 21 
+
+
+//
+// Macro # 23
+/$ 22 
+
+
+//
+// Macro # 24
+/$ 23 
+
+
+//
+// Macro # 25 
+/$ 24 Virtual HD1 MT63-1KL @>|
+<MODEM:MT63-1KL><GOFREQ:1500><TX>\n
+VIRTUAL_HAM_DIGITAL_1: Through the hallway and to the keymaster\n
+VIRTUAL_HAM_DIGITAL_1: Through the hallway and to the keymaster\n
+VIRTUAL_HAM_DIGITAL_1: Through the hallway and to the keymaster\n
+<RX>
+
+//
+// Macro # 26 
+/$ 25 Virtual HD2 RTTY-45 @>|
+<MODEM:RTTY><GOFREQ:1000><TX>\n
+VIRTUAL_HAM_DIGITAL_2: NEON WATERFALL BACKDROP TO THIS CITY SKYLINE\n
+VIRTUAL_HAM_DIGITAL_2: NEON WATERFALL BACKDROP TO THIS CITY SKYLINE\n
+VIRTUAL_HAM_DIGITAL_2: NEON WATERFALL BACKDROP TO THIS CITY SKYLINE\n
+<RX>
+
+//
+// Macro # 27 
+/$ 26 Virtual HD3 OLIVIA-4/250 @>|
+<MODEM:OLIVIA-4/250><GOFREQ:2000><TX>\n
+VIRTUAL_HAM_DIGITAL_3: Pass through this door and into a new reality\n
+VIRTUAL_HAM_DIGITAL_3: Pass through this door and into a new reality\n
+VIRTUAL_HAM_DIGITAL_3: Pass through this door and into a new reality\n
+<RX>
+
+//
+// Macro # 28 
+/$ 27 Virtual HD4 BPSK1000 @>|
+<MODEM:BPSK1000><GOFREQ:1200><TX>\n
+VIRTUAL_HAM_DIGITAL_4: These are not the signals you are looking for... or are they?\n
+VIRTUAL_HAM_DIGITAL_4: These are not the signals you are looking for... or are they?\n
+VIRTUAL_HAM_DIGITAL_4: These are not the signals you are looking for... or are they?\n
+<RX>
+
+//
+// Macro # 29 
+/$ 28 Virtual HD5 THOR32  @>|
+<MODEM:THOR32><GOFREQ:750><TX>\n
+VIRTUAL_HAM_DIGITAL_5: Is it a 22nm process, or is that just what they want you to believe\n
+VIRTUAL_HAM_DIGITAL_5: Is it a 22nm process, or is that just what they want you to believe\n
+VIRTUAL_HAM_DIGITAL_5: Is it a 22nm process, or is that just what they want you to believe\n
+<RX>
+
+//
+// Macro # 30 
+/$ 29 Virtual HD6 FELDHELL @>|
+<MODEM:FELDHELL><GOFREQ:1400><TX>\n
+VIRTUAL_HAM_DIGITAL_6: WONKY LINES BUT DO IT TWICE TO FIX THE TIMING\n
+VIRTUAL_HAM_DIGITAL_6: WONKY LINES BUT DO IT TWICE TO FIX THE TIMING\n
+VIRTUAL_HAM_DIGITAL_6: WONKY LINES BUT DO IT TWICE TO FIX THE TIMING\n
+<RX>
+
+//
+// Macro # 31
+/$ 30 
+
+
+//
+// Macro # 32
+/$ 31 
+
+
+//
+// Macro # 33
+/$ 32 
+
+
+//
+// Macro # 34
+/$ 33 
+
+
+//
+// Macro # 35
+/$ 34 
+
+
+//
+// Macro # 36
+/$ 35 
+
+
+//
+// Macro # 37
+/$ 36 
+
+
+//
+// Macro # 38
+/$ 37 
+
+
+//
+// Macro # 39
+/$ 38 
+
+
+//
+// Macro # 40
+/$ 39 
+
+
+//
+// Macro # 41
+/$ 40 
+
+
+//
+// Macro # 42
+/$ 41 
+
+
+//
+// Macro # 43
+/$ 42 
+
+
+//
+// Macro # 44
+/$ 43 
+
+
+//
+// Macro # 45
+/$ 44 
+
+
+//
+// Macro # 46
+/$ 45 
+
+
+//
+// Macro # 47
+/$ 46 
+
+
+//
+// Macro # 48
+/$ 47 
+
