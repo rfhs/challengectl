@@ -1,0 +1,297 @@
+//fldigi macro definition file extended
+// This file defines the macro structure(s) for the digital modem program, fldigi
+// It also serves as a basis for any macros that are written by the user
+//
+// The top line of this file should always be the first line in every macro 
+// definition file (.mdf) for the fldigi program to recognize it as such.
+//
+
+//
+// Macro # 1
+/$ 0 HD1 MT63-1KL @>|
+<MODEM:MT63-1KL><GOFREQ:1500><TX>\n
+HAM_DIGITAL_1: First U.S. study abroad program in 1923\n
+HAM_DIGITAL_1: First U.S. study abroad program in 1923\n
+HAM_DIGITAL_1: First U.S. study abroad program in 1923\n
+<RX>
+
+//
+// Macro # 2
+/$ 1 HD2 RTTY-45 @>|
+<MODEM:RTTY><GOFREQ:1000><TX>\n
+HAM_DIGITAL_2: THE FIGHTING BLUE HENS REPRESENT THE UNIVERSITY OF DELAWARE\n
+HAM_DIGITAL_2: THE FIGHTING BLUE HENS REPRESENT THE UNIVERSITY OF DELAWARE\n
+HAM_DIGITAL_2: THE FIGHTING BLUE HENS REPRESENT THE UNIVERSITY OF DELAWARE\n
+<RX>
+
+//
+// Macro # 3
+/$ 2 HD3 OLIVIA-4/250 @>|
+<MODEM:OLIVIA-4/250><GOFREQ:2000><TX>\n
+HAM_DIGITAL_3: University of Delaware launched the first study abroad program in 1921.\n
+HAM_DIGITAL_3: University of Delaware launched the first study abroad program in 1921.\n
+HAM_DIGITAL_3: University of Delaware launched the first study abroad program in 1921.\n
+<RX>
+
+//
+// Macro # 4
+/$ 3 HD4 BPSK1000 @>|
+<MODEM:BPSK1000><GOFREQ:1200><TX>\n
+HAM_DIGITAL_4: The Blue Hen chicken was adopted as the official state bird of Delaware in 1939.\n
+HAM_DIGITAL_4: The Blue Hen chicken was adopted as the official state bird of Delaware in 1939.\n
+HAM_DIGITAL_4: The Blue Hen chicken was adopted as the official state bird of Delaware in 1939.\n
+<RX>
+
+//
+// Macro # 5
+/$ 4 HD5 THOR32  @>|
+<MODEM:THOR32><GOFREQ:750><TX>\n
+HAM_DIGITAL_5: YoUDee the Blue Hen is the mascot of the University of Delaware.\n
+HAM_DIGITAL_5: YoUDee the Blue Hen is the mascot of the University of Delaware.\n
+HAM_DIGITAL_5: YoUDee the Blue Hen is the mascot of the University of Delaware.\n
+<RX>
+
+//
+// Macro # 6
+/$ 5 HD6 FELDHELL @>|
+<MODEM:FELDHELL><GOFREQ:1400><TX>\n
+HAM_DIGITAL_6: FORT DELAWARE ON PEA PATCH ISLAND\n
+HAM_DIGITAL_6: FORT DELAWARE ON PEA PATCH ISLAND\n
+HAM_DIGITAL_6: FORT DELAWARE ON PEA PATCH ISLAND\n
+<RX>
+
+//
+// Macro # 7
+/$ 6 
+
+
+//
+// Macro # 8
+/$ 7 
+
+
+//
+// Macro # 9
+/$ 8 T/R
+<TX/RX>
+
+//
+// Macro # 10
+/$ 9 Tx @>>
+<TX>
+
+//
+// Macro # 11
+/$ 10 Rx @||
+<RX>
+
+//
+// Macro # 12
+/$ 11 TX @>|
+<TX>\n
+de <MYCALL> k\n
+<RX>
+
+//
+// Macro # 13
+/$ 12 HD1 RX
+<MODEM:MT63-1KL><GOFREQ:1500><RX>
+
+//
+// Macro # 14
+/$ 13 HD2 RX
+<MODEM:RTTY><GOFREQ:1000><RX>
+
+//
+// Macro # 15
+/$ 14 HD3 RX
+<MODEM:OLIVIA-4/250><GOFREQ:2000><RX>
+
+//
+// Macro # 16
+/$ 15 HD4 RX
+<MODEM:BPSK1000><GOFREQ:1200><RX>
+
+//
+// Macro # 17
+/$ 16 HD5 RX
+<MODEM:THOR32><GOFREQ:750><RX>
+
+//
+// Macro # 18
+/$ 17 HD6 RX
+<MODEM:FELDHELL><GOFREQ:1400><RX>
+
+//
+// Macro # 19
+/$ 18 
+
+
+//
+// Macro # 20
+/$ 19 
+
+
+//
+// Macro # 21
+/$ 20 
+
+
+//
+// Macro # 22
+/$ 21 
+
+
+//
+// Macro # 23
+/$ 22 
+
+
+//
+// Macro # 24
+/$ 23 
+
+
+//
+// Macro # 25 
+/$ 24 Virtual HD1 MT63-1KL @>|
+<MODEM:MT63-1KL><GOFREQ:1500><TX>\n
+VIRTUAL_HAM_DIGITAL_1: Home of the Fighting Blue Hens\n
+VIRTUAL_HAM_DIGITAL_1: Home of the Fighting Blue Hens\n
+VIRTUAL_HAM_DIGITAL_1: Home of the Fighting Blue Hens\n
+<RX>
+
+//
+// Macro # 26 
+/$ 25 Virtual HD2 RTTY-45 @>|
+<MODEM:RTTY><GOFREQ:1000><TX>\n
+VIRTUAL_HAM_DIGITAL_2: THE BLUE HEN IS THE OFFICIAL STATE BIRD OF DELAWARE\n
+VIRTUAL_HAM_DIGITAL_2: THE BLUE HEN IS THE OFFICIAL STATE BIRD OF DELAWARE\n
+VIRTUAL_HAM_DIGITAL_2: THE BLUE HEN IS THE OFFICIAL STATE BIRD OF DELAWARE\n
+<RX>
+
+//
+// Macro # 27 
+/$ 26 Virtual HD3 OLIVIA-4/250 @>|
+<MODEM:OLIVIA-4/250><GOFREQ:2000><TX>\n
+VIRTUAL_HAM_DIGITAL_3: Delaware College became the University of Delaware in 1921.\n
+VIRTUAL_HAM_DIGITAL_3: Delaware College became the University of Delaware in 1921.\n
+VIRTUAL_HAM_DIGITAL_3: Delaware College became the University of Delaware in 1921.\n
+<RX>
+
+//
+// Macro # 28 
+/$ 27 Virtual HD4 BPSK1000 @>|
+<MODEM:BPSK1000><GOFREQ:1200><TX>\n
+VIRTUAL_HAM_DIGITAL_4: Delaware became the First State on December 7, 1787.\n
+VIRTUAL_HAM_DIGITAL_4: Delaware became the First State on December 7, 1787.\n
+VIRTUAL_HAM_DIGITAL_4: Delaware became the First State on December 7, 1787.\n
+<RX>
+
+//
+// Macro # 29 
+/$ 28 Virtual HD5 THOR32  @>|
+<MODEM:THOR32><GOFREQ:750><TX>\n
+VIRTUAL_HAM_DIGITAL_5: Blue Hens hatching signals in Newark\n
+VIRTUAL_HAM_DIGITAL_5: Blue Hens hatching signals in Newark\n
+VIRTUAL_HAM_DIGITAL_5: Blue Hens hatching signals in Newark\n
+<RX>
+
+//
+// Macro # 30 
+/$ 29 Virtual HD6 FELDHELL @>|
+<MODEM:FELDHELL><GOFREQ:1400><TX>\n
+VIRTUAL_HAM_DIGITAL_6: EDGAR ALLAN POE VISITED THE DEER PARK TAVERN IN NEWARK\n
+VIRTUAL_HAM_DIGITAL_6: EDGAR ALLAN POE VISITED THE DEER PARK TAVERN IN NEWARK\n
+VIRTUAL_HAM_DIGITAL_6: EDGAR ALLAN POE VISITED THE DEER PARK TAVERN IN NEWARK\n
+<RX>
+
+//
+// Macro # 31
+/$ 30 
+
+
+//
+// Macro # 32
+/$ 31 
+
+
+//
+// Macro # 33
+/$ 32 
+
+
+//
+// Macro # 34
+/$ 33 
+
+
+//
+// Macro # 35
+/$ 34 
+
+
+//
+// Macro # 36
+/$ 35 
+
+
+//
+// Macro # 37
+/$ 36 
+
+
+//
+// Macro # 38
+/$ 37 
+
+
+//
+// Macro # 39
+/$ 38 
+
+
+//
+// Macro # 40
+/$ 39 
+
+
+//
+// Macro # 41
+/$ 40 
+
+
+//
+// Macro # 42
+/$ 41 
+
+
+//
+// Macro # 43
+/$ 42 
+
+
+//
+// Macro # 44
+/$ 43 
+
+
+//
+// Macro # 45
+/$ 44 
+
+
+//
+// Macro # 46
+/$ 45 
+
+
+//
+// Macro # 47
+/$ 46 
+
+
+//
+// Macro # 48
+/$ 47 
+
