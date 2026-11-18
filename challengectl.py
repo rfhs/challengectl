@@ -15,19 +15,18 @@ import argparse
 import subprocess
 import math
 import json
+from create_devices_txt import discover_devices, create_devices_txt
 
 from challenges import ask, cw, usb_tx, nbfm, spectrum_paint, pocsagtx_osmocom, lrs_pager, lrs_tx
 from challenges.gotenna import gotenna_pro_tx_bladerf
 
-def build_database(flagfile, devicefile):
+def build_database(flagfile, devices):
     """Create sqlite database based on flags file and devices file. Database file name will be based on
     conference name extracted from first line of flags file."""
     flag_input = read_flags(flagfile)
     # Skip first line of flag_input where conference information is stored
     # Add remaining lines to flag_line array
     flag_line = np.asarray(flag_input[1:])
-
-    devices = read_devices(devicefile)
 
     # Read name of conference from first line of flag file
     conference = flag_input[0][0]
@@ -498,9 +497,26 @@ def main(options=None):
     flag_input = read_flags(flagfile)
     # Extract conference name from first item returned by read_flags
     conference = flag_input[0][0]
+
+    # Detect SDR devices and create a list of device strings for them
+    if(devicefile != None):
+        devices = read_devices(devicefile)
+        print(devices)
+    else:
+        print("No devices file specified, autodetecting devices...")
+        disablebiastee = False
+        discover_devices_verbose = False
+        device_strings = discover_devices(disablebiastee, discover_devices_verbose)
+        devices = []
+        reader = csv.reader(create_devices_txt(device_strings), quotechar='"')
+        for row in reader:
+            devices.append(row)
+        print("Using devices:")
+        print(devices)
+
     # Check to see if database for conference name exists, create it if not
     if not os.path.exists(conference + ".db"):
-        build_database(flagfile, devicefile)
+        build_database(flagfile, devices)
 
     # Connect to conference database
     conn = sqlite3.connect(conference + ".db")
