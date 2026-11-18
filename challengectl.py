@@ -409,13 +409,6 @@ def get_challenge_bandwidth(challengetype):
         print("WARNING: Default case reached in get_challenge_bandwidth. challengetype: {}".format(challengetype))
         return 10000
 
-def select_dvbt(channel):
-    with open("dvbt_channels.txt") as f:
-        reader = csv.reader(f)
-        for row in reader:
-            if row[0] == channel:
-                return(int(row[1]))
-
 def read_flags(flags_file):
     """Read lines from flags_file and return a list of lists for each row in the flags_file. 
     The first item in the list contains conference information, and the remaining items in the
