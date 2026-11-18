@@ -106,6 +106,16 @@ def discover_devices(disablebiastee, verbose):
                 print("hackrfserial: {}".format(hackrfserial))
     return sdrstrings
 
+def create_devices_txt(device_strings):
+    # Generate strings for challengectl devices.txt file
+    outputstrings = []
+    index = 0
+    for sdr in device_strings:
+        sdrstring = "{},\"{}\"".format(index, sdr)
+        outputstrings.append(sdrstring)
+        index += 1
+    return outputstrings
+
 
 def main(options=None):
     if options is None:
@@ -120,14 +130,9 @@ def main(options=None):
 
     # This list will hold the GrOsmoSDR device strings
     sdrstrings = discover_devices(disablebiastee, verbose)
-    
+
     # Generate strings for challengectl devices.txt file
-    outputstrings = []
-    index = 0
-    for sdr in sdrstrings:
-        sdrstring = "{},\"{}\"".format(index, sdr)
-        outputstrings.append(sdrstring)
-        index += 1
+    outputstrings = create_devices_txt(sdrstrings)
 
     # Print devices.txt strings to screen, and write to outputfile if printonly is not set.
     if(printonly == True):
