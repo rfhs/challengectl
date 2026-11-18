@@ -4,17 +4,20 @@ Queues challenges and gr-osmosdr radios to transmit for the RFCTF
 
 ```
 $ python challengectl.py -h
-usage: challengectl.py [-h] [-v] flagfile devicefile
+usage: challengectl.py [-h] [-f FLAGFILE] [-d DEVICEFILE] [-a AVOIDFREQSFILE] [-v] [-t]
 
 A script to run SDR challenges on multiple SDR devices.
 
-positional arguments:
-  flagfile       Flags file
-  devicefile     Devices file
-
 options:
-  -h, --help     show this help message and exit
+  -h, --help            show this help message and exit
+  -f, --flagfile FLAGFILE
+                        Flags file
+  -d, --devicefile DEVICEFILE
+                        Devices file
+  -a, --avoidfreqsfile AVOIDFREQSFILE
+                        Avoid Frequencies file
   -v, --verbose
+  -t, --test            Run each challenge once to test flags.
 ```
 
 ## Flags File
