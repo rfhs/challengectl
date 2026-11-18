@@ -13,17 +13,7 @@ def argument_parser():
     parser.add_argument("-v", "--verbose", action="store_true")
     return parser
 
-def main(options=None):
-    if options is None:
-        options = argument_parser().parse_args()
-
-    args = options
-    verbose = args.verbose
-    printonly = args.printonly
-    outputfile = args.file
-    disablebiastee = args.disablebiastee
-
-
+def discover_devices(disablebiastee, verbose):
     # This list will hold the GrOsmoSDR device strings
     sdrstrings = []
     
@@ -114,14 +104,35 @@ def main(options=None):
             else:
                 print("WARNING: HackRF device skipped")
                 print("hackrfserial: {}".format(hackrfserial))
-    
+    return sdrstrings
+
+def create_devices_txt(device_strings):
     # Generate strings for challengectl devices.txt file
     outputstrings = []
     index = 0
-    for sdr in sdrstrings:
+    for sdr in device_strings:
         sdrstring = "{},\"{}\"".format(index, sdr)
         outputstrings.append(sdrstring)
         index += 1
+    return outputstrings
+
+
+def main(options=None):
+    if options is None:
+        options = argument_parser().parse_args()
+
+    args = options
+    verbose = args.verbose
+    printonly = args.printonly
+    outputfile = args.file
+    disablebiastee = args.disablebiastee
+
+
+    # This list will hold the GrOsmoSDR device strings
+    sdrstrings = discover_devices(disablebiastee, verbose)
+
+    # Generate strings for challengectl devices.txt file
+    outputstrings = create_devices_txt(sdrstrings)
 
     # Print devices.txt strings to screen, and write to outputfile if printonly is not set.
     if(printonly == True):
